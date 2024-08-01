@@ -1,5 +1,7 @@
 package lexwomy.fletching.mixin;
 
+import lexwomy.fletching.item.ShortbowItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -13,20 +15,15 @@ import static net.minecraft.item.Items.register;
 @Mixin(Items.class)
 public abstract class ItemsMixin {
     //Didn't work
-    //@Shadow
-    //public static final Item ARROW = register("flint_arrow", new ArrowItem(new Item.Settings()));
 
     @ModifyArgs(method = "<clinit>",
                 slice = @Slice(
-                        from = @At(value = "CONSTANT", args = "stringValue=arrow")
+                        from = @At(value = "CONSTANT", args = "stringValue=bow")
                 ),
                 at = @At(value = "INVOKE",
                         target = "Lnet/minecraft/item/Items;register(Ljava/lang/String;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;",
                         ordinal = 0))
-    private static void modifyArrowToFlintArrow(Args args) {
-        //This will load an entirely new item and delete all normal arrows
-        //It is necessary that minecraft:arrow stay the same, though the language can be renamed to flint arrow
-        //args.set(0, "flint_arrow");
-        //Set new ArrowItem() to custom class later TODO
+    private static void changeBowToShortbow(Args args) {
+        args.set(1, new ShortbowItem(new Item.Settings().maxDamage(512)));
     }
 }

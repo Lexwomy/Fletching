@@ -18,9 +18,14 @@ public class LongbowItem extends BowItem {
     public static final int RANGE = 20;
     public static final float DRAW_TIME = 50.0F;
     public static final float BASE_VELOCITY = 3.5F;
+    private int FOCUS = 0;
 
     public LongbowItem(Settings settings) {
         super(settings);
+    }
+
+    public float getFocusedVelocity() {
+        return BASE_VELOCITY + (0.1F * (float)FOCUS);
     }
 
     @Override
