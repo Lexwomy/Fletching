@@ -3,9 +3,11 @@ package lexwomy.fletching.item;
 
 import lexwomy.fletching.FletchingTableInitializer;
 import lexwomy.fletching.component.FletchingComponents;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
 public class FletchingItems {
@@ -27,7 +29,17 @@ public class FletchingItems {
     );
 
     public static final Item IRON_ARROW = register(
-            new IronArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 4)),
+            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
             "iron_arrow"
+    );
+
+    public static final Item DIAMOND_ARROW = register(
+            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 3)),
+            "diamond_arrow"
+    );
+
+    public static final Item NETHERITE_ARROW = register(
+            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 5)),
+            "netherite_arrow"
     );
 }

@@ -1,5 +1,6 @@
 package lexwomy.fletching;
 
+import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.screen.FletchingScreenHandler;
 import net.fabricmc.api.ModInitializer;
@@ -16,8 +17,8 @@ public class FletchingTableInitializer implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger("fletching-table");
-	public static final String MOD_ID = "fletching-table";
+    public static final Logger LOGGER = LoggerFactory.getLogger("fletching");
+	public static final String MOD_ID = "fletching";
 
 	public static final ScreenHandlerType<FletchingScreenHandler> FLETCHING = new ScreenHandlerType<>(FletchingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
@@ -26,6 +27,7 @@ public class FletchingTableInitializer implements ModInitializer {
 		//Registers the fletching screen handler to the minecraft registries
 		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "fletching"), FLETCHING);
 
+		FletchingComponents.initialize();
 		FletchingItems.initialize();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.

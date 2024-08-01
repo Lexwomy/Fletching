@@ -8,7 +8,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class FletchingComponents {
-    protected static void initialize() {
+    public static void initialize() {
         FletchingTableInitializer.LOGGER.info("Component class initialized!");
     }
 
