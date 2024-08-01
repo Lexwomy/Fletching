@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "fletching-table",
+	"id": "fletching",
 	"version": "${version}",
 	"name": "Fletching Table",
 	"description": "This is an example description! Tell everyone what your mod is about!",
@@ -16,19 +16,19 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"lexwomy.fletchingtable.FletchingTableInitializer"
+			"lexwomy.fletching.FletchingTableInitializer"
 		],
 		"client": [
-			"lexwomy.fletchingtable.FletchingTableClient"
+			"lexwomy.fletching.FletchingTableClient"
 		],
 		"fabric-datagen": [
-			"lexwomy.fletchingtable.FletchingTableDataGenerator"
+			"lexwomy.fletching.FletchingTableDataGenerator"
 		]
 	},
 	"mixins": [
-		"fletching-table.mixins.json",
+		"fletching.mixins.json",
 		{
-			"config": "fletching-table.client.mixins.json",
+			"config": "fletching.client.mixins.json",
 			"environment": "client"
 		}
 	],

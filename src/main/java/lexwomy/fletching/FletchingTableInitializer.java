@@ -1,7 +1,7 @@
-package lexwomy.fletchingtable;
+package lexwomy.fletching;
 
-import lexwomy.fletchingtable.item.FletchingItems;
-import lexwomy.fletchingtable.screen.FletchingScreenHandler;
+import lexwomy.fletching.item.FletchingItems;
+import lexwomy.fletching.screen.FletchingScreenHandler;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.registry.Registries;

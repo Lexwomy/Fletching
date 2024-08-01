@@ -1,9 +1,8 @@
-package lexwomy.fletchingtable.item;
+package lexwomy.fletching.item;
 
 
-import lexwomy.fletchingtable.FletchingTableInitializer;
-import lexwomy.fletchingtable.component.FletchingComponents;
-import net.minecraft.item.BowItem;
+import lexwomy.fletching.FletchingTableInitializer;
+import lexwomy.fletching.component.FletchingComponents;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;

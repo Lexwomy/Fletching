@@ -1,13 +1,9 @@
-package lexwomy.fletchingtable.item;
+package lexwomy.fletching.item;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.RangedWeaponItem;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 public class LongbowItem extends BowItem {
     public static final int TICKS_PER_SECOND = 20;

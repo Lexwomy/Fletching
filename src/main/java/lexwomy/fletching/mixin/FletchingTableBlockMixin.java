@@ -1,6 +1,6 @@
-package lexwomy.fletchingtable.mixin;
+package lexwomy.fletching.mixin;
 
-import lexwomy.fletchingtable.screen.FletchingScreenHandler;
+import lexwomy.fletching.screen.FletchingScreenHandler;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CraftingTableBlock;

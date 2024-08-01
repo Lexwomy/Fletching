@@ -1,6 +1,6 @@
-package lexwomy.fletchingtable.screen;
+package lexwomy.fletching.screen;
 
-import lexwomy.fletchingtable.FletchingTableInitializer;
+import lexwomy.fletching.FletchingTableInitializer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;

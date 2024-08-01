@@ -1,6 +1,6 @@
-package lexwomy.fletchingtable.item;
+package lexwomy.fletching.item;
 
-import lexwomy.fletchingtable.component.FletchingComponents;
+import lexwomy.fletching.component.FletchingComponents;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

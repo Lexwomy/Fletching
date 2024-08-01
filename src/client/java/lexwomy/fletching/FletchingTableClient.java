@@ -1,6 +1,6 @@
-package lexwomy.fletchingtable;
+package lexwomy.fletching;
 
-import lexwomy.fletchingtable.component.FletchingComponents;
+import lexwomy.fletching.component.FletchingComponents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.item.Items;

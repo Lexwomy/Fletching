@@ -1,7 +1,7 @@
-package lexwomy.fletchingtable.mixin;
+package lexwomy.fletching.mixin;
 
-import lexwomy.fletchingtable.FletchingTableInitializer;
-import lexwomy.fletchingtable.component.FletchingComponents;
+import lexwomy.fletching.FletchingTableInitializer;
+import lexwomy.fletching.component.FletchingComponents;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;

@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "lexwomy.fletchingtable.mixin",
+	"package": "lexwomy.fletching.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ItemsMixin",

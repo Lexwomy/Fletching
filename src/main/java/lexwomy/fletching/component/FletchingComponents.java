@@ -1,7 +1,7 @@
-package lexwomy.fletchingtable.component;
+package lexwomy.fletching.component;
 
 import com.mojang.serialization.Codec;
-import lexwomy.fletchingtable.FletchingTableInitializer;
+import lexwomy.fletching.FletchingTableInitializer;
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;

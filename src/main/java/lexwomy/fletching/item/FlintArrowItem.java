@@ -1,4 +1,4 @@
-package lexwomy.fletchingtable.item;
+package lexwomy.fletching.item;
 
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.Item;
