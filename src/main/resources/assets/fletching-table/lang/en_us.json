@@ -1,4 +1,5 @@
 {
   "container.fletching_table": "Fletching Table",
-  "item.fletching-table.hardness.info": "Hardness: %1$s"
+  "item.fletching-table.hardness.info1": "Stats:",
+  "item.fletching-table.hardness.info2": "%1$s Hardness"
 }
