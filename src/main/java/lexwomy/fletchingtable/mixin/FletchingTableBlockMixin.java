@@ -1,6 +1,6 @@
 package lexwomy.fletchingtable.mixin;
 
-import lexwomy.fletchingtable.FletchingScreenHandler;
+import lexwomy.fletchingtable.screen.FletchingScreenHandler;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CraftingTableBlock;
@@ -42,8 +42,7 @@ public abstract class FletchingTableBlockMixin extends CraftingTableBlock {
 	}
 
 	protected NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-		return new SimpleNamedScreenHandlerFactory((syncId, inventory, player) -> {
-			return new FletchingScreenHandler(syncId, inventory, ScreenHandlerContext.create(world, pos));
-		}, TITLE);
+		return new SimpleNamedScreenHandlerFactory(
+				(syncId, inventory, player) -> new FletchingScreenHandler(syncId, inventory, ScreenHandlerContext.create(world, pos)), TITLE);
 	}
 }

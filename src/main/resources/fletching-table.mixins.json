@@ -3,7 +3,8 @@
 	"package": "lexwomy.fletchingtable.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"FletchingTableBlockMixin"
+		"ItemsMixin",
+		"AddHardnessToCalcMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
