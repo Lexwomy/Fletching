@@ -1,11 +1,12 @@
 {
-	"required": true,
-	"package": "lexwomy.fletching.mixin.client",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-      "RegisterNewBowsToClientPlayerMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "lexwomy.fletching.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AddNewBowsToHeldItemRendererMixin",
+    "RegisterNewBowsToClientPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

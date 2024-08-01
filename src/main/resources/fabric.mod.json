@@ -16,13 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"lexwomy.fletching.FletchingTableInitializer"
+          "lexwomy.fletching.FletchingInitializer"
 		],
 		"client": [
 			"lexwomy.fletching.FletchingTableClient"
 		],
 		"fabric-datagen": [
-			"lexwomy.fletching.FletchingTableDataGenerator"
+			"lexwomy.fletching.FletchingDataGenerator"
 		]
 	},
 	"mixins": [

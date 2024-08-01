@@ -1,19 +1,18 @@
 package lexwomy.fletching.item;
 
 
-import lexwomy.fletching.FletchingTableInitializer;
+import lexwomy.fletching.FletchingInitializer;
 import lexwomy.fletching.component.FletchingComponents;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
 public class FletchingItems {
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
-        Identifier itemID = Identifier.of(FletchingTableInitializer.MOD_ID, id);
+        Identifier itemID = Identifier.of(FletchingInitializer.MOD_ID, id);
 
         // Register the item.
         return Registry.register(Registries.ITEM, itemID, item);

@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.authlib.GameProfile;
+import lexwomy.fletching.FletchingInitializer;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
@@ -33,10 +34,8 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 
 	@WrapOperation(method = "getFovMultiplier",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
-	private boolean addCheckForNewBows(ItemStack instance, Item item, Operation<Boolean> original) {
-		//item is a bow
-		//TODO - Either add new bows into a tag and check for tag, or add manually the greatbow
-		return original.call(instance, item) || instance.isOf(FletchingItems.LONGBOW);
+	private boolean replaceCheckWithBowTag(ItemStack instance, Item item, Operation<Boolean> original) {
+		return instance.isIn(FletchingInitializer.BOWS);
 	}
 
 	@Inject(method = "getFovMultiplier",
