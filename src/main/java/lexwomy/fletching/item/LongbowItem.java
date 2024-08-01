@@ -16,7 +16,7 @@ import java.util.List;
 
 public class LongbowItem extends BowItem {
     public static final int RANGE = 20;
-    public static final float DRAW_TIME = 60.0F;
+    public static final float DRAW_TIME = 50.0F;
     public static final float BASE_VELOCITY = 3.5F;
 
     public LongbowItem(Settings settings) {
