@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.authlib.GameProfile;
 import lexwomy.fletching.FletchingInitializer;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -43,13 +45,21 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 		return instance.isIn(FletchingInitializer.BOWS);
 	}
 
+	@ModifyExpressionValue(method = "getFovMultiplier",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getItemUseTime()I"))
+	private int passOnTickValue(int original, @Share("i") LocalIntRef tick_ref) {
+		tick_ref.set(original);
+		return original;
+	}
+
 	@ModifyVariable(method = "getFovMultiplier", at = @At(value = "STORE", opcode = Opcodes.FSTORE), ordinal = 1)
-	private float replaceDrawTime(float original, @Local ItemStack itemStack, @Share("fov_factor") LocalFloatRef fov_ref) {
+	private float replaceDrawTime(float original, @Local ItemStack itemStack,
+								  @Share("i") LocalIntRef tick_ref, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
 		float draw_time = 20.0F;
 		if (itemStack.isOf(Items.BOW)) {
-			ShortbowItem bow = (ShortbowItem) itemStack.getItem();
-			draw_time = bow.getFrenzyDrawTime();
-			fov_ref.set(0.1F);
+			//ShortbowItem bow = (ShortbowItem) itemStack.getItem();
+			//draw_time = bow.getFrenzyDrawTime();
+			fov_ref.set(0.15F);
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
 			//LongbowItem bow = (LongbowItem) itemStack.getItem();
 			draw_time = LongbowItem.DRAW_TIME;
@@ -59,13 +69,24 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 			fov_ref.set(0.4F);
 		}
 
-
-		return (original * 20.0F) / draw_time;
+		float new_g = Math.min(1.0F, tick_ref.get() / draw_time);
+		g_ref.set(new_g * new_g);
+		FletchingInitializer.LOGGER.info("Tick: {}", tick_ref.get());
+		return new_g;
 	}
 
-	@ModifyVariable(method = "getFovMultiplier", at = @At(value = "STORE", opcode = Opcodes.FSTORE, ordinal = 4), ordinal = 0)
-	private float replaceFovFactor(float original, @Local float g, @Share("fov_factor") LocalFloatRef fov_ref) {
-		return original + (g * (0.15F - fov_ref.get()));
+	@ModifyVariable(method = "getFovMultiplier",
+			slice = @Slice(
+					from = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getItemUseTime()I")
+			),
+			at = @At(value = "STORE", opcode = Opcodes.FSTORE, ordinal = 0),
+			ordinal = 0)
+	private float replaceFovFactor(float original, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
+		//f = f * (1.0F - g * 0.15F)
+
+		float reverse = original / (1.0F - g_ref.get() * 0.15F);
+		FletchingInitializer.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
+		return reverse * (1.0F - g_ref.get() * fov_ref.get());
 	}
 
 //	@Inject(method = "getFovMultiplier",
