@@ -7,6 +7,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public abstract class ConvertBowToShortbowMixin extends RangedWeaponItem {
     public ConvertBowToShortbowMixin(Settings settings) {
         super(settings);
     }
+
 
 
 }

@@ -17,4 +17,9 @@ public class FletchingComponents {
             Identifier.of(FletchingInitializer.MOD_ID, "hardness"),
             ComponentType.<Integer>builder().codec(Codec.INT).build()
     );
+
+//    public static final ComponentType<Integer> FRENZY = Registry.register(
+//            Registries.DATA_COMPONENT_TYPE,
+//            Identifier.o
+//    )
 }

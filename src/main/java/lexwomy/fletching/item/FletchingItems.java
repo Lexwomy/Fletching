@@ -35,6 +35,11 @@ public class FletchingItems {
             "longbow"
     );
 
+    public static final Item SHORTBOW = register(
+            new ShortbowItem(new Item.Settings().maxDamage(512)),
+            "shortbow"
+    );
+
     public static final Item IRON_ARROW = register(
             new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
             "iron_arrow"

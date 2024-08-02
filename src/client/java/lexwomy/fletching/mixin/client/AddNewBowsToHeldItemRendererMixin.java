@@ -23,6 +23,6 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
     @WrapOperation(method = "getUsingItemHandRenderType",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
     private static boolean includeNewBowsToRenderCheck(ItemStack instance, Item item, Operation<Boolean> original) {
-        return instance.isIn(FletchingInitializer.BOWS);
+        return !instance.isIn(FletchingInitializer.BOWS);
     }
 }

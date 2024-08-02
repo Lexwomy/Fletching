@@ -42,7 +42,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 	@WrapOperation(method = "getFovMultiplier",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private boolean replaceCheckWithBowTag(ItemStack instance, Item item, Operation<Boolean> original) {
-		return instance.isIn(FletchingInitializer.BOWS);
+		return original.call(instance, item) || instance.isIn(FletchingInitializer.BOWS);
 	}
 
 	@ModifyExpressionValue(method = "getFovMultiplier",
@@ -56,17 +56,18 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 	private float replaceDrawTime(float original, @Local ItemStack itemStack,
 								  @Share("i") LocalIntRef tick_ref, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
 		float draw_time = 20.0F;
-		if (itemStack.isOf(Items.BOW)) {
+		if (itemStack.isOf(FletchingItems.SHORTBOW)) {
 			//ShortbowItem bow = (ShortbowItem) itemStack.getItem();
 			//draw_time = bow.getFrenzyDrawTime();
-			fov_ref.set(0.15F);
+			draw_time = ShortbowItem.DRAW_TIME;
+			fov_ref.set(0.1F);
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
 			//LongbowItem bow = (LongbowItem) itemStack.getItem();
 			draw_time = LongbowItem.DRAW_TIME;
 			fov_ref.set(0.25F);
 		} else {
 			//Add greatbow logic
-			fov_ref.set(0.4F);
+			fov_ref.set(0.15F);
 		}
 
 		float new_g = Math.min(1.0F, tick_ref.get() / draw_time);
