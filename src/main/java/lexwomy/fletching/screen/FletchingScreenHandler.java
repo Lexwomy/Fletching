@@ -1,6 +1,6 @@
 package lexwomy.fletching.screen;
 
-import lexwomy.fletching.FletchingInitializer;
+import lexwomy.fletching.Fletching;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,7 @@ public class FletchingScreenHandler extends ScreenHandler {
 
     //Server constructor
     public FletchingScreenHandler(int syncId, PlayerInventory inventory, final ScreenHandlerContext context) {
-        super(FletchingInitializer.FLETCHING, syncId);
+        super(Fletching.FLETCHING, syncId);
         this.context = context;
     }
 

@@ -1,6 +1,6 @@
 package lexwomy.fletching.mixin;
 
-import lexwomy.fletching.FletchingInitializer;
+import lexwomy.fletching.Fletching;
 import lexwomy.fletching.component.FletchingComponents;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.LivingEntity;
@@ -23,7 +23,7 @@ public abstract class AddHardnessToCalcMixin {
                 int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
                 float penetration = hardness * 0.1F;
                 //1 - (i - 0.1h)
-                FletchingInitializer.LOGGER.info("Previous result: {}, Penetration: {}, new result: {}", result, penetration, result - penetration);
+                Fletching.LOGGER.info("Previous result: {}, Penetration: {}, new result: {}", result, penetration, result - penetration);
                 return Math.max(result - penetration, 0);
             }
         }

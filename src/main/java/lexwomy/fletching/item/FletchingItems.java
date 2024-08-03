@@ -1,7 +1,7 @@
 package lexwomy.fletching.item;
 
 
-import lexwomy.fletching.FletchingInitializer;
+import lexwomy.fletching.Fletching;
 import lexwomy.fletching.component.FletchingComponents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ArrowItem;
@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 public class FletchingItems {
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
-        Identifier itemID = Identifier.of(FletchingInitializer.MOD_ID, id);
+        Identifier itemID = Identifier.of(Fletching.MOD_ID, id);
 
         // Register the item.
         return Registry.register(Registries.ITEM, itemID, item);
@@ -27,7 +27,7 @@ public class FletchingItems {
             itemGroup.add(FletchingItems.DIAMOND_ARROW);
             itemGroup.add(FletchingItems.NETHERITE_ARROW);
         });
-        FletchingInitializer.LOGGER.info("Fletching items registered!");
+        Fletching.LOGGER.info("Fletching items registered!");
     }
 
     public static final Item LONGBOW = register(
