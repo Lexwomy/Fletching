@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-          "lexwomy.fletching.FletchingInitializer"
+          "lexwomy.fletching.Fletching"
 		],
 		"client": [
 			"lexwomy.fletching.FletchingTableClient"

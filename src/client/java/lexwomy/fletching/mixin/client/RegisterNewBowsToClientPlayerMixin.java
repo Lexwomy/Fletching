@@ -7,30 +7,23 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.authlib.GameProfile;
-import lexwomy.fletching.FletchingInitializer;
+import lexwomy.fletching.Fletching;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
@@ -42,7 +35,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 	@WrapOperation(method = "getFovMultiplier",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private boolean replaceCheckWithBowTag(ItemStack instance, Item item, Operation<Boolean> original) {
-		return original.call(instance, item) || instance.isIn(FletchingInitializer.BOWS);
+		return original.call(instance, item) || instance.isIn(Fletching.BOWS);
 	}
 
 	@ModifyExpressionValue(method = "getFovMultiplier",
@@ -57,9 +50,9 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 								  @Share("i") LocalIntRef tick_ref, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
 		float draw_time = 20.0F;
 		if (itemStack.isOf(FletchingItems.SHORTBOW)) {
-			//ShortbowItem bow = (ShortbowItem) itemStack.getItem();
-			//draw_time = bow.getFrenzyDrawTime();
-			draw_time = ShortbowItem.DRAW_TIME;
+			ShortbowItem bow = (ShortbowItem) itemStack.getItem();
+			draw_time = bow.getFrenzyDrawTime((LivingEntity) (Object)this);
+			//draw_time = ShortbowItem.DRAW_TIME;
 			fov_ref.set(0.1F);
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
 			//LongbowItem bow = (LongbowItem) itemStack.getItem();
@@ -72,7 +65,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 
 		float new_g = Math.min(1.0F, tick_ref.get() / draw_time);
 		g_ref.set(new_g * new_g);
-		FletchingInitializer.LOGGER.info("Tick: {}", tick_ref.get());
+		Fletching.LOGGER.info("Tick: {}", tick_ref.get());
 		return new_g;
 	}
 
@@ -86,7 +79,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 		//f = f * (1.0F - g * 0.15F)
 
 		float reverse = original / (1.0F - g_ref.get() * 0.15F);
-		FletchingInitializer.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
+		Fletching.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
 		return reverse * (1.0F - g_ref.get() * fov_ref.get());
 	}
 
