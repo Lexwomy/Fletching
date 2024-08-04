@@ -35,7 +35,7 @@ public class FrenzyEffect extends StatusEffect {
         super.onApplied(entity, amplifier);
 
 
-        this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
-                0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+//        this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
+//                0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 }
