@@ -32,15 +32,14 @@ public class Fletching implements ModInitializer {
 	public static final TagKey<Item> BOWS = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "bows"));
 	public static final StatusEffect FRENZY_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "frenzy"),
 			new FrenzyEffect().addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
-			0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-	public static final RegistryEntry<StatusEffect> FRENZY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "frenzy"),
-			new FrenzyEffect().addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
-			0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+					0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+	public static final RegistryEntry<StatusEffect> FRENZY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "frenzy"), FRENZY_EFFECT);
 
 	@Override
 	public void onInitialize() {
 		//Registers the fletching screen handler to the minecraft registries
 		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "fletching"), FLETCHING);
+		//Registry.register(RegistryKeys.ENCHANTMENT, Identifier.of(MOD_ID, "frenzy"), )
 
 		FletchingComponents.initialize();
 		FletchingItems.initialize();

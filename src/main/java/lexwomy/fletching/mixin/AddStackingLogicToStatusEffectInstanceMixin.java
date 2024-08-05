@@ -29,7 +29,6 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
 
     //Allows stacking effects to bypass normal amplifier check restriction
     //As adding a smaller frenzy e.g. should compound on the current one
-
     @Definition(id = "amplifier", field = "Lnet/minecraft/entity/effect/StatusEffectInstance;amplifier:I")
     @Definition(id = "that", local = @Local(argsOnly = true, type = StatusEffectInstance.class))
     @Expression("? > this.amplifier")
@@ -40,9 +39,6 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     }
 
     //Sets the current amplifier for the new effect to be the sum of the previous and the incoming stacking effect
-//    @ModifyExpressionValue(method = "upgrade",
-//            at = @At(value = "FIELD", ordinal = 0,
-//                    target = "Lnet/minecraft/entity/effect/StatusEffectInstance;amplifier:I", opcode = Opcodes.PUTFIELD))
     @WrapOperation(method = "upgrade",
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;amplifier:I", opcode = Opcodes.PUTFIELD))
     private void applyPreviousAmplifierToCurrent(StatusEffectInstance instance, int value, Operation<Void> original, StatusEffectInstance that) {
