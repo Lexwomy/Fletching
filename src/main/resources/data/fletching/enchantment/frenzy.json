@@ -9,16 +9,40 @@
         "affected": "attacker",
         "effect": {
           "type": "minecraft:apply_mob_effect",
-          "max_amplifier": 4.0,
-          "max_duration": 10,
-          "min_amplifier": 1.0,
-          "min_duration": 10,
+          "max_amplifier": {
+            "type": "minecraft:linear",
+            "base": 0,
+            "per_level_above_first": 1.0
+          },
+          "max_duration": {
+            "type": "minecraft:linear",
+            "base": 20,
+            "per_level_above_first": -5
+          },
+          "min_amplifier": {
+            "type": "minecraft:linear",
+            "base": 0,
+            "per_level_above_first": 1.0
+          },
+          "min_duration": {
+            "type": "minecraft:linear",
+            "base": 20,
+            "per_level_above_first": -5
+          },
           "to_apply": "fletching:frenzy"
         },
-        "enchanted": "attacker"
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "direct_attacker",
+          "predicate": {
+            "type": "#minecraft:arrows"
+          }
+        }
       }
     ]
   },
+  "exclusive_set": "minecraft:infinity",
   "max_cost": {
     "base": 25,
     "per_level_above_first": 8

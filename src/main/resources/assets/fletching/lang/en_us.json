@@ -6,6 +6,8 @@
   "item.fletching.diamond_arrow": "Diamond Arrow",
   "item.fletching.netherite_arrow": "Netherite Arrow",
   "item.fletching.longbow": "Longbow",
+  "item.fletching.shortbow": "Shortbow",
   "tag.item.fletching.bows": "Bows",
-  "effect.fletching.frenzy": "Frenzy"
+  "effect.fletching.frenzy": "Frenzy",
+  "enchantment.fletching.frenzy": "Frenzy"
 }
