@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(HeldItemRenderer.class)
 public abstract class AddNewBowsToHeldItemRendererMixin {
-
+    //These mixins allow the new bows to be rendered the same way the vanilla bow is rendered from the first person client perspective
     @ModifyVariable(method = "getHandRenderType", at = @At(value = "STORE", opcode = Opcodes.ISTORE), ordinal = 0)
     private static boolean modifyHoldingBowCriteria(boolean result, @Local(ordinal = 0) ItemStack itemStack, @Local(ordinal = 1) ItemStack itemStack2) {
-        return itemStack.isIn(Fletching.BOWS) || itemStack2.isIn(Fletching.BOWS);
+        return result || itemStack.isIn(Fletching.BOWS) || itemStack2.isIn(Fletching.BOWS);
     }
 
     @WrapOperation(method = "getUsingItemHandRenderType",

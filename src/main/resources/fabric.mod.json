@@ -19,7 +19,7 @@
           "lexwomy.fletching.Fletching"
 		],
 		"client": [
-			"lexwomy.fletching.FletchingTableClient"
+          "lexwomy.fletching.FletchingClient"
 		],
 		"fabric-datagen": [
 			"lexwomy.fletching.FletchingDataGenerator"

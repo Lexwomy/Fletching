@@ -27,11 +27,11 @@ import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
-
+	//Do not use
 	public RegisterNewBowsToClientPlayerMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
 		super(world, pos, yaw, gameProfile);
 	}
-
+	//These mixins add separate logic to change the draw times used to render the pulling animation times for the client
 	@WrapOperation(method = "getFovMultiplier",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private boolean replaceCheckWithBowTag(ItemStack instance, Item item, Operation<Boolean> original) {
@@ -52,10 +52,8 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 		if (itemStack.isOf(FletchingItems.SHORTBOW)) {
 			ShortbowItem bow = (ShortbowItem) itemStack.getItem();
 			draw_time = bow.getFrenzyDrawTime((LivingEntity) (Object)this);
-			//draw_time = ShortbowItem.DRAW_TIME;
 			fov_ref.set(0.1F);
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
-			//LongbowItem bow = (LongbowItem) itemStack.getItem();
 			draw_time = LongbowItem.DRAW_TIME;
 			fov_ref.set(0.25F);
 		} else {
@@ -76,35 +74,8 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 			at = @At(value = "STORE", opcode = Opcodes.FSTORE, ordinal = 0),
 			ordinal = 0)
 	private float replaceFovFactor(float original, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
-		//f = f * (1.0F - g * 0.15F)
-
 		float reverse = original / (1.0F - g_ref.get() * 0.15F);
 		Fletching.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
 		return reverse * (1.0F - g_ref.get() * fov_ref.get());
 	}
-
-//	@Inject(method = "getFovMultiplier",
-//			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getItemUseTime()I",
-//					shift = At.Shift.BY, by = 2),
-//			cancellable = true)
-//	private void injectNewBowLogic(CallbackInfoReturnable<Float> cir, @Local ItemStack itemStack, @Local(ordinal = 0) float f, @Local int i) {
-//		float draw_time = 20.0F; //ShortbowItem.DRAW_TIME
-//		float fov_factor = 0.15F; //0.1F for shortbow
-//
-//		if (itemStack.isOf(FletchingItems.LONGBOW)) {
-//			draw_time = LongbowItem.DRAW_TIME;
-//			fov_factor = 0.25F;
-//		}
-//
-//		float g = (float)i / draw_time;
-//		if (g > 1.0F) {
-//			g = 1.0F;
-//		} else {
-//			g *= g;
-//		}
-//
-//		f *= 1.0F - g * fov_factor;
-//
-//		cir.setReturnValue(MathHelper.lerp(MinecraftClient.getInstance().options.getFovEffectScale().getValue().floatValue(), 1.0F, f));
-//	}
 }

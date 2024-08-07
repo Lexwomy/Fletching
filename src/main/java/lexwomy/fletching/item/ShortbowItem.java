@@ -15,6 +15,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,7 @@ public class ShortbowItem extends RangedWeaponItem {
     public static final float DRAW_TIME = 15.0F;
     public static final float BASE_VELOCITY = 1.75F;
     public static final int RANGE = 10;
+    private static final Random RANDOM = Random.create();
 
     public ShortbowItem(Settings settings) {
         super(settings);
@@ -41,14 +43,22 @@ public class ShortbowItem extends RangedWeaponItem {
         return DRAW_TIME - (0.25F * frenzy_stack);
     }
 
+    public float getFrenzyInaccuracy(LivingEntity user) {
+        StatusEffectInstance effect = user.getStatusEffect(Fletching.FRENZY);
+        int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        int range = Math.round(0.25F * frenzy_stack);
+        return RANDOM.nextBetweenExclusive(-range, range);
+    }
+
     @Override
     public int getRange() {
         return RANGE;
     }
 
+    //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-        projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0.0F, speed, divergence);
+        projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
     }
 
     public float getPullProgress(int useTicks, LivingEntity user) {
@@ -75,7 +85,8 @@ public class ShortbowItem extends RangedWeaponItem {
                 if (!((double)f < 0.1)) {
                     List<ItemStack> list = load(stack, itemStack, playerEntity);
                     if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
-                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
+                         this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list,
+                                f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
                     }
 
                     world.playSound(
@@ -86,10 +97,9 @@ public class ShortbowItem extends RangedWeaponItem {
                             SoundEvents.ENTITY_ARROW_SHOOT,
                             SoundCategory.PLAYERS,
                             1.0F,
-                            0.7F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F
+                            1.3F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F
                     );
                     playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
-                    //TODO - If too hard to track entity hits from here, increment frenzy for every arrow shot, check enchantment
                 }
             }
         }

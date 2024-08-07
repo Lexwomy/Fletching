@@ -5,16 +5,21 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
-public class LongbowItem extends BowItem {
+public class LongbowItem extends RangedWeaponItem {
     public static final int RANGE = 20;
     public static final float DRAW_TIME = 50.0F;
     public static final float BASE_VELOCITY = 3.5F;
@@ -29,13 +34,18 @@ public class LongbowItem extends BowItem {
     }
 
     @Override
+    public Predicate<ItemStack> getProjectiles() {
+        return BOW_PROJECTILES;
+    }
+
+    @Override
     public int getRange() {
         return RANGE;
     }
 
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-        super.shoot(shooter, projectile, index, speed, divergence, yaw, target);
+        projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0.0F, speed, divergence);
     }
 
     public static float getPullProgress(int useTicks) {
@@ -74,6 +84,28 @@ public class LongbowItem extends BowItem {
                     playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
                 }
             }
+        }
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        return 72000;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BOW;
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        ItemStack itemStack = user.getStackInHand(hand);
+        boolean bl = !user.getProjectileType(itemStack).isEmpty();
+        if (!user.isInCreativeMode() && !bl) {
+            return TypedActionResult.fail(itemStack);
+        } else {
+            user.setCurrentHand(hand);
+            return TypedActionResult.consume(itemStack);
         }
     }
 }
