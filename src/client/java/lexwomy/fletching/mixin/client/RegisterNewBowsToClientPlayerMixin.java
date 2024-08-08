@@ -63,7 +63,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 
 		float new_g = Math.min(1.0F, tick_ref.get() / draw_time);
 		g_ref.set(new_g * new_g);
-		Fletching.LOGGER.info("Tick: {}", tick_ref.get());
+		//Fletching.LOGGER.info("Tick: {}", tick_ref.get());
 		return new_g;
 	}
 
@@ -75,7 +75,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 			ordinal = 0)
 	private float replaceFovFactor(float original, @Share("g") LocalFloatRef g_ref, @Share("fov_factor") LocalFloatRef fov_ref) {
 		float reverse = original / (1.0F - g_ref.get() * 0.15F);
-		Fletching.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
+		//Fletching.LOGGER.info("Original: {}, reverse: {}, new: {}", original, reverse, reverse * (1.0F - g_ref.get() * fov_ref.get()));
 		return reverse * (1.0F - g_ref.get() * fov_ref.get());
 	}
 }

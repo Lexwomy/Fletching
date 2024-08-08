@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class ShortbowItem extends RangedWeaponItem {
+    //Used as the base draw time of the bow, which can be affected by frenzy
     public static final float DRAW_TIME = 15.0F;
     public static final float BASE_VELOCITY = 1.75F;
     public static final int RANGE = 10;
@@ -40,13 +41,13 @@ public class ShortbowItem extends RangedWeaponItem {
     public float getFrenzyDrawTime(LivingEntity user) {
         StatusEffectInstance effect = user.getStatusEffect(Fletching.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
-        return DRAW_TIME - (0.25F * frenzy_stack);
+        return Math.round(DRAW_TIME - (0.25F * frenzy_stack));
     }
 
     public float getFrenzyInaccuracy(LivingEntity user) {
         StatusEffectInstance effect = user.getStatusEffect(Fletching.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
-        int range = Math.round(0.25F * frenzy_stack);
+        int range = Math.round(0.125F * frenzy_stack);
         return range != 0 ? RANDOM.nextBetweenExclusive(-range, range) : 0;
     }
 
@@ -58,14 +59,15 @@ public class ShortbowItem extends RangedWeaponItem {
     //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-        projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
+        projectile.setVelocity(shooter, shooter.getPitch() + + getFrenzyInaccuracy(shooter),
+                shooter.getYaw() + yaw + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
     }
 
     public float getPullProgress(int useTicks, LivingEntity user) {
 
 
-        float base = Math.round(this.getFrenzyDrawTime(user));
-        Fletching.LOGGER.info("Draw time is now: {}", base);
+        float base = this.getFrenzyDrawTime(user);
+        //Fletching.LOGGER.info("Draw time is now: {}", base);
         float f = (float)useTicks / base;
         f = (f * f + f * 2.0F) / 3.0F;
         if (f > 1.0F) {
