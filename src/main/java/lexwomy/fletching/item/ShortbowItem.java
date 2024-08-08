@@ -47,7 +47,7 @@ public class ShortbowItem extends RangedWeaponItem {
         StatusEffectInstance effect = user.getStatusEffect(Fletching.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
         int range = Math.round(0.25F * frenzy_stack);
-        return RANDOM.nextBetweenExclusive(-range, range);
+        return range != 0 ? RANDOM.nextBetweenExclusive(-range, range) : 0;
     }
 
     @Override
