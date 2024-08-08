@@ -39,45 +39,8 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
         return !instance.isIn(Fletching.BOWS);
     }
 
-//    @Inject(method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V",
-//            at = @At(value = "INVOKE",
-//                    target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-//                    ordinal = 0))
-//    private void observeEquipProgress(float tickDelta, MatrixStack matrices,
-//                                      VertexConsumerProvider.Immediate vertexConsumers,
-//                                      ClientPlayerEntity player, int light, CallbackInfo ci,
-//                                      @Local(name = "k", ordinal = 0) float k) {
-//        Fletching.LOGGER.info("Equip progress: {}", k);
-//    }
-
-    @Inject(method = "renderFirstPersonItem",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
-                    ordinal = 5))
-    private void observeFirstPersonProgress(AbstractClientPlayerEntity player, float tickDelta,
-                                            float pitch, Hand hand, float swingProgress, ItemStack item,
-                                            float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers,
-                                            int light, CallbackInfo ci) {
-        //Too hard to target the constants so just calculate mx and fxx here and log them
-        Item bow = item.getItem();
-        float mx = (float)item.getMaxUseTime(player) - ((float)player.getItemUseTimeLeft() - tickDelta + 1.0F);
-        float fxx = mx / 20.0F;
-        float fxx_new = (fxx * fxx + fxx * 2.0F) / 3.0F;
-        Fletching.LOGGER.info("mx: {}, vanilla fxx: {}, vanilla computed fxx: {}", mx, fxx, fxx_new);
-
-        if (bow instanceof ShortbowItem) {
-            float shortbow_fxx = mx / ((ShortbowItem) bow).getFrenzyDrawTime(player);
-            float shortbow_fxx_new = (shortbow_fxx * shortbow_fxx + shortbow_fxx * 2.0F) / 3.0F;
-            Fletching.LOGGER.info("mx: {}, shortbow fxx: {}, shortbow computed fxx: {}", mx, shortbow_fxx, shortbow_fxx_new);
-        }
-
-        if (bow instanceof LongbowItem) {
-            float longbow_fxx = mx / LongbowItem.DRAW_TIME;
-            float longbow_fxx_new = (longbow_fxx * longbow_fxx + longbow_fxx * 2.0F) / 3.0F;
-            Fletching.LOGGER.info("mx: {}, longbow fxx: {}, longbow computed fxx: {}", mx, longbow_fxx, longbow_fxx_new);
-        }
-    }
-
+    //This modifies the fxx variable to match the draw time of the other bows
+    //This method controls the movement/transformation of the 3D item model when pulling the bow back
     @ModifyVariable(method = "renderFirstPersonItem",
                     slice = @Slice(
                             from = @At(
@@ -88,28 +51,26 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
                                     value = "INVOKE",
                                     target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
                                     ordinal = 6)),
-                    at = @At(value = "STORE", opcode = Opcodes.FSTORE),
+                    at = @At(value = "STORE", opcode = Opcodes.FSTORE, ordinal = 0),
                     ordinal = 5)
-    private float test(float original, AbstractClientPlayerEntity player, float tickDelta,
+    private float adjustDrawTimeForPullBack(float original, AbstractClientPlayerEntity player, float tickDelta,
                        float pitch, Hand hand, float swingProgress, ItemStack item,
                        float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers,
                        int light) {
         Item bow = item.getItem();
         float mx = (float)item.getMaxUseTime(player) - ((float)player.getItemUseTimeLeft() - tickDelta + 1.0F);
         if (bow instanceof ShortbowItem) {
-
-            //float mx = original * 20.0F;
-            //ShortbowItem bow = (ShortbowItem) item.getItem();
             float draw_time = ((ShortbowItem) bow).getFrenzyDrawTime(player);
-            Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
+            //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
             return mx / draw_time;
         } else if (bow instanceof LongbowItem) {
-            //float mx = original * 20.0F;
             float draw_time = LongbowItem.DRAW_TIME;
-            Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
+            //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
             return mx / draw_time;
         }
         //TODO - Add greatbow logic
         return original;
     }
 }
+
+
