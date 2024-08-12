@@ -51,8 +51,8 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
             original.call(instance, new_amplifier);
         } else if (that.equals(Fletching.FOCUS)) {
             int new_amplifier = value + instance.getAmplifier() + 1;
-            if (new_amplifier > 8) {
-                new_amplifier = 8;
+            if (new_amplifier > 7) {
+                new_amplifier = 7;
             }
             original.call(instance, new_amplifier);
         } else {

@@ -41,6 +41,9 @@ public class ShortbowItem extends RangedWeaponItem {
     public float getFrenzyDrawTime(LivingEntity user) {
         StatusEffectInstance effect = user.getStatusEffect(Fletching.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        if (frenzy_stack > 40) {
+            frenzy_stack = 40;
+        }
         return Math.round(DRAW_TIME - (0.25F * frenzy_stack));
     }
 

@@ -1,7 +1,11 @@
 package lexwomy.fletching.item;
 
+import lexwomy.fletching.Fletching;
+import lexwomy.fletching.mixin.ExposeArrowDamageMixin;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
@@ -19,18 +23,37 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static lexwomy.fletching.Fletching.FOCUS;
+import static lexwomy.fletching.Fletching.FOCUS_EFFECT;
+
+//TODO Add compatibility by using a custom event to add piercing enchantment to longbow
 public class LongbowItem extends RangedWeaponItem {
     public static final int RANGE = 20;
     public static final float DRAW_TIME = 50.0F;
     public static final float BASE_VELOCITY = 3.5F;
-    private int FOCUS = 0;
+    public static final double DAMAGE = 2.0F;
+    //private int FOCUS = 0;
 
     public LongbowItem(Settings settings) {
         super(settings);
     }
 
-    public float getFocusedVelocity() {
-        return BASE_VELOCITY + (0.1F * (float)FOCUS);
+    public double getFocusedDamage(LivingEntity user) {
+        StatusEffectInstance effect = user.getStatusEffect(FOCUS);
+        int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        if (focus_stack > 8) {
+            focus_stack = 8;
+        }
+        return DAMAGE + (0.25 * focus_stack);
+    }
+
+    public float getFocusedDivergence(LivingEntity user) {
+        StatusEffectInstance effect = user.getStatusEffect(FOCUS);
+        int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        if (focus_stack > 8) {
+            focus_stack = 8;
+        }
+        return 1.0F - (0.125F * focus_stack);
     }
 
     @Override
@@ -45,6 +68,7 @@ public class LongbowItem extends RangedWeaponItem {
 
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
+        ((ExposeArrowDamageMixin) projectile).setDamage(getFocusedDamage(shooter));
         projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0.0F, speed, divergence);
     }
 
@@ -68,7 +92,7 @@ public class LongbowItem extends RangedWeaponItem {
                 if (!((double)f < 0.1)) {
                     List<ItemStack> list = load(stack, itemStack, playerEntity);
                     if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
-                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
+                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, this.getFocusedDivergence(user), f == 1.0F, null);
                     }
 
                     world.playSound(
