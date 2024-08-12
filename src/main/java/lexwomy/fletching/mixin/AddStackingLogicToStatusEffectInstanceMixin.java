@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import lexwomy.fletching.Fletching;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +35,7 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     @Expression("? > this.amplifier")
     @ModifyExpressionValue(method = "upgrade", at = @At("MIXINEXTRAS:EXPRESSION"))
     private boolean allowStackingToBypassAmplifierCheck(boolean original, StatusEffectInstance that) {
-        boolean stacking = that.equals(Fletching.FRENZY);
+        boolean stacking = that.equals(Fletching.FRENZY) || that.equals(Fletching.FOCUS);
         return original || stacking;
     }
 
@@ -46,6 +47,12 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
             int new_amplifier = value + instance.getAmplifier() + 1;
             if (new_amplifier > 39) {
                 new_amplifier = 39;
+            }
+            original.call(instance, new_amplifier);
+        } else if (that.equals(Fletching.FOCUS)) {
+            int new_amplifier = value + instance.getAmplifier() + 1;
+            if (new_amplifier > 8) {
+                new_amplifier = 8;
             }
             original.call(instance, new_amplifier);
         } else {
