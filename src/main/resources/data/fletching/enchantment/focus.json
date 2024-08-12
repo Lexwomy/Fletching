@@ -1,35 +1,35 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "enchantment.fletching.crippling"
+    "translate": "enchantment.fletching.focus"
   },
   "effects": {
     "minecraft:post_attack": [
       {
-        "affected": "victim",
+        "affected": "attacker",
         "effect": {
           "type": "minecraft:apply_mob_effect",
           "max_amplifier": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 1.0
+            "base": 0,
+            "per_level_above_first": 0
           },
           "max_duration": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 4
+            "base": 30,
+            "per_level_above_first": 0
           },
           "min_amplifier": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 1.0
+            "base": 0,
+            "per_level_above_first": 0
           },
           "min_duration": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 4
+            "base": 30,
+            "per_level_above_first": 0
           },
-          "to_apply": "minecraft:slowness"
+          "to_apply": "fletching:focus"
         },
         "enchanted": "attacker",
         "requirements": {
@@ -43,17 +43,17 @@
     ]
   },
   "max_cost": {
-    "base": 25,
+    "base": 30,
     "per_level_above_first": 8
   },
-  "max_level": 3,
+  "max_level": 1,
   "min_cost": {
-    "base": 5,
+    "base": 20,
     "per_level_above_first": 8
   },
   "slots": [
     "mainhand"
   ],
   "supported_items": "fletching:longbow",
-  "weight": 4
+  "weight": 1
 }

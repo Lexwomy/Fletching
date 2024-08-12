@@ -1,35 +1,35 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "enchantment.fletching.crippling"
+    "translate": "enchantment.fletching.hunter"
   },
   "effects": {
     "minecraft:post_attack": [
       {
-        "affected": "victim",
+        "affected": "attacker",
         "effect": {
           "type": "minecraft:apply_mob_effect",
           "max_amplifier": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 1.0
+            "base": 0,
+            "per_level_above_first": 0
           },
           "max_duration": {
             "type": "minecraft:linear",
             "base": 2,
-            "per_level_above_first": 4
+            "per_level_above_first": 2
           },
           "min_amplifier": {
             "type": "minecraft:linear",
-            "base": 2,
-            "per_level_above_first": 1.0
+            "base": 0,
+            "per_level_above_first": 0
           },
           "min_duration": {
             "type": "minecraft:linear",
             "base": 2,
-            "per_level_above_first": 4
+            "per_level_above_first": 2
           },
-          "to_apply": "minecraft:slowness"
+          "to_apply": "minecraft:invisibility"
         },
         "enchanted": "attacker",
         "requirements": {
@@ -46,7 +46,7 @@
     "base": 25,
     "per_level_above_first": 8
   },
-  "max_level": 3,
+  "max_level": 2,
   "min_cost": {
     "base": 5,
     "per_level_above_first": 8
