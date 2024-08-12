@@ -9,5 +9,9 @@
   "item.fletching.shortbow": "Shortbow",
   "tag.item.fletching.bows": "Bows",
   "effect.fletching.frenzy": "Frenzy",
-  "enchantment.fletching.frenzy": "Frenzy"
+  "enchantment.fletching.frenzy": "Frenzy",
+  "enchantment.fletching.crippling": "Crippling",
+  "enchantment.fletching.focus": "Focus",
+  "enchantment.fletching.hunter": "Hunter",
+  "effect.fletching.focus": "Focus"
 }
