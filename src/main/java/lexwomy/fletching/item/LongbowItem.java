@@ -1,13 +1,10 @@
 package lexwomy.fletching.item;
 
-import lexwomy.fletching.Fletching;
-import lexwomy.fletching.mixin.ExposeArrowDamageMixin;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +21,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static lexwomy.fletching.Fletching.FOCUS;
-import static lexwomy.fletching.Fletching.FOCUS_EFFECT;
 
 //TODO Add compatibility by using a custom event to add piercing enchantment to longbow
 public class LongbowItem extends RangedWeaponItem {
@@ -68,7 +64,8 @@ public class LongbowItem extends RangedWeaponItem {
 
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-        ((ExposeArrowDamageMixin) projectile).setDamage(getFocusedDamage(shooter));
+        //((ExposeArrowDamageMixin) projectile).setDamage(getFocusedDamage(shooter));
+        ((PersistentProjectileEntity) projectile).setDamage(getFocusedDamage(shooter));
         projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0.0F, speed, divergence);
     }
 

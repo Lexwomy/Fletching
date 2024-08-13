@@ -54,4 +54,9 @@ public class FletchingItems {
             new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 5)),
             "netherite_arrow"
     );
+
+    public static final Item FLINT_PILUM = register(
+            new PilumItem(new Item.Settings()),
+            "flint_pilum"
+    );
 }
