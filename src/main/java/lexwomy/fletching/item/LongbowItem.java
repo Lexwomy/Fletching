@@ -44,7 +44,7 @@ public class LongbowItem extends RangedWeaponItem {
         if (focus_stack > 8) {
             focus_stack = 8;
         }
-        return DAMAGE + (0.25 * focus_stack);
+        return DAMAGE + (0.5 * focus_stack);
     }
 
     public float getFocusedDivergence(LivingEntity user) {
