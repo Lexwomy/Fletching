@@ -1,5 +1,6 @@
 package lexwomy.fletching.item;
 
+import lexwomy.fletching.effect.FletchingEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static lexwomy.fletching.Fletching.FOCUS;
-
 //TODO Add compatibility by using a custom event to add piercing enchantment to longbow
 public class LongbowItem extends RangedWeaponItem {
     public static final int RANGE = 20;
@@ -35,7 +34,7 @@ public class LongbowItem extends RangedWeaponItem {
     }
 
     public double getFocusedDamage(LivingEntity user) {
-        StatusEffectInstance effect = user.getStatusEffect(FOCUS);
+        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FOCUS);
         int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
         if (focus_stack > 8) {
             focus_stack = 8;
@@ -44,7 +43,7 @@ public class LongbowItem extends RangedWeaponItem {
     }
 
     public float getFocusedDivergence(LivingEntity user) {
-        StatusEffectInstance effect = user.getStatusEffect(FOCUS);
+        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FOCUS);
         int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
         if (focus_stack > 8) {
             focus_stack = 8;

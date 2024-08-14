@@ -50,7 +50,7 @@ public class FletchingClient implements ClientModInitializer {
 
 			ShortbowItem bow = (ShortbowItem) itemStack.getItem();
 			return livingEntity.getActiveItem() != itemStack ? 0.0F :
-					(itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / bow.getFrenzyDrawTime(livingEntity);
+					(itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / bow.getFrenzyDrawTime(livingEntity, itemStack);
 		});
 
 		ModelPredicateProviderRegistry.register(FletchingItems.SHORTBOW, Identifier.ofVanilla("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {

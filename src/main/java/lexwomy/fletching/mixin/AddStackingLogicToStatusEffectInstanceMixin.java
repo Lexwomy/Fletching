@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import lexwomy.fletching.Fletching;
+import lexwomy.fletching.effect.FletchingEffects;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import org.objectweb.asm.Opcodes;
@@ -35,7 +36,7 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     @Expression("? > this.amplifier")
     @ModifyExpressionValue(method = "upgrade", at = @At("MIXINEXTRAS:EXPRESSION"))
     private boolean allowStackingToBypassAmplifierCheck(boolean original, StatusEffectInstance that) {
-        boolean stacking = that.equals(Fletching.FRENZY) || that.equals(Fletching.FOCUS);
+        boolean stacking = that.equals(FletchingEffects.FRENZY) || that.equals(FletchingEffects.FOCUS);
         return original || stacking;
     }
 
@@ -43,13 +44,13 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     @WrapOperation(method = "upgrade",
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;amplifier:I", opcode = Opcodes.PUTFIELD))
     private void applyPreviousAmplifierToCurrent(StatusEffectInstance instance, int value, Operation<Void> original, StatusEffectInstance that) {
-        if (that.equals(Fletching.FRENZY)) {
+        if (that.equals(FletchingEffects.FRENZY)) {
             int new_amplifier = value + instance.getAmplifier() + 1;
             if (new_amplifier > 39) {
                 new_amplifier = 39;
             }
             original.call(instance, new_amplifier);
-        } else if (that.equals(Fletching.FOCUS)) {
+        } else if (that.equals(FletchingEffects.FOCUS)) {
             int new_amplifier = value + instance.getAmplifier() + 1;
             if (new_amplifier > 7) {
                 new_amplifier = 7;

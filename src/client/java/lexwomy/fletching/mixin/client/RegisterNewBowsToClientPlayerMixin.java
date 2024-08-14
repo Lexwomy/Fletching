@@ -8,10 +8,10 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.mojang.authlib.GameProfile;
-import lexwomy.fletching.Fletching;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
+import lexwomy.fletching.tags.FletchingItemTags;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,7 +35,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 	@WrapOperation(method = "getFovMultiplier",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private boolean replaceCheckWithBowTag(ItemStack instance, Item item, Operation<Boolean> original) {
-		return original.call(instance, item) || instance.isIn(Fletching.BOWS);
+		return original.call(instance, item) || instance.isIn(FletchingItemTags.BOWS);
 	}
 
 	@ModifyExpressionValue(method = "getFovMultiplier",
@@ -51,7 +51,7 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 		float draw_time = 20.0F;
 		if (itemStack.isOf(FletchingItems.SHORTBOW)) {
 			ShortbowItem bow = (ShortbowItem) itemStack.getItem();
-			draw_time = bow.getFrenzyDrawTime((LivingEntity) (Object)this);
+			draw_time = bow.getFrenzyDrawTime((LivingEntity) (Object)this, itemStack);
 			fov_ref.set(0.1F);
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
 			draw_time = LongbowItem.DRAW_TIME;
