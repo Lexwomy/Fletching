@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class FletchingItemTags {
     public static final TagKey<Item> BOWS = TagKey.of(RegistryKeys.ITEM, Identifier.of(Fletching.MOD_ID, "bows"));
+    public static final TagKey<Item> PILUMS = TagKey.of(RegistryKeys.ITEM, Identifier.of(Fletching.MOD_ID, "pilums"));
     public static void initialize() {
         Fletching.LOGGER.info("Fletching item tags registered!");
     }

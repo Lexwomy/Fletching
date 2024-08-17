@@ -2,6 +2,7 @@ package lexwomy.fletching;
 
 import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.item.FletchingItems;
+import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
 import net.fabricmc.api.ClientModInitializer;
@@ -37,6 +38,21 @@ public class FletchingClient implements ClientModInitializer {
 		});
 
 		ModelPredicateProviderRegistry.register(FletchingItems.LONGBOW, Identifier.ofVanilla("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
+			if (livingEntity == null) {
+				return 0.0F;
+			}
+			return livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0F : 0.0F;
+		});
+
+		ModelPredicateProviderRegistry.register(FletchingItems.GREATBOW, Identifier.ofVanilla("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
+			if (livingEntity == null) {
+				return 0.0F;
+			}
+			return livingEntity.getActiveItem() != itemStack ? 0.0F :
+					(itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / GreatbowItem.DRAW_TIME;
+		});
+
+		ModelPredicateProviderRegistry.register(FletchingItems.GREATBOW, Identifier.ofVanilla("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {
 				return 0.0F;
 			}

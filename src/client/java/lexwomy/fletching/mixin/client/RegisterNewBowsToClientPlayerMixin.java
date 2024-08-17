@@ -9,6 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.mojang.authlib.GameProfile;
 import lexwomy.fletching.item.FletchingItems;
+import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
 import lexwomy.fletching.tags.FletchingItemTags;
@@ -56,8 +57,10 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 		} else if (itemStack.isOf(FletchingItems.LONGBOW)) {
 			draw_time = LongbowItem.DRAW_TIME;
 			fov_ref.set(0.25F);
+		} else if (itemStack.isOf(FletchingItems.GREATBOW)) {
+			draw_time = GreatbowItem.DRAW_TIME;
+			fov_ref.set(0.5F);
 		} else {
-			//Add greatbow logic
 			fov_ref.set(0.15F);
 		}
 

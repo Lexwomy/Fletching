@@ -40,6 +40,11 @@ public class FletchingItems {
             "shortbow"
     );
 
+    public static final Item GREATBOW = register(
+            new GreatbowItem(new Item.Settings().maxDamage(512)),
+            "greatbow"
+    );
+
     public static final Item IRON_ARROW = register(
             new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
             "iron_arrow"
@@ -56,7 +61,7 @@ public class FletchingItems {
     );
 
     public static final Item FLINT_PILUM = register(
-            new PilumItem(new Item.Settings()),
+            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
             "flint_pilum"
     );
 }

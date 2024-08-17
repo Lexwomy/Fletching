@@ -3,6 +3,7 @@ package lexwomy.fletching.mixin.client;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
 import lexwomy.fletching.tags.FletchingItemTags;
@@ -53,13 +54,16 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
                        int light) {
         Item bow = item.getItem();
         float mx = (float)item.getMaxUseTime(player) - ((float)player.getItemUseTimeLeft() - tickDelta + 1.0F);
-        if (bow instanceof ShortbowItem) {
-            float draw_time = ((ShortbowItem) bow).getFrenzyDrawTime(player, item);
+        if (bow instanceof ShortbowItem shortbow) {
+            float draw_time = shortbow.getFrenzyDrawTime(player, item);
             //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
             return mx / draw_time;
         } else if (bow instanceof LongbowItem) {
             float draw_time = LongbowItem.DRAW_TIME;
             //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
+            return mx / draw_time;
+        } else if (bow instanceof GreatbowItem) {
+            float draw_time = GreatbowItem.DRAW_TIME;
             return mx / draw_time;
         }
         //TODO - Add greatbow logic
