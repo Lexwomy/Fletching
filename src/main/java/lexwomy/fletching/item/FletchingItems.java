@@ -61,7 +61,8 @@ public class FletchingItems {
     );
 
     public static final Item FLINT_PILUM = register(
-            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
+            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)
+                    .component(FletchingComponents.PIERCING, 1)),
             "flint_pilum"
     );
 }

@@ -2,6 +2,7 @@
   "container.fletching_table": "Fletching Table",
   "item.fletching.hardness.info1": "Stats:",
   "item.fletching.hardness.info2": "%1$s Hardness",
+  "item.fletching.piercing.info": "%1$s Piercing",
   "item.fletching.iron_arrow": "Iron Arrow",
   "item.fletching.diamond_arrow": "Diamond Arrow",
   "item.fletching.netherite_arrow": "Netherite Arrow",

@@ -24,8 +24,12 @@ public class FletchingClient implements ClientModInitializer {
 		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
 			if (stack.isIn(ItemTags.ARROWS) || stack.isIn(FletchingItemTags.PILUMS)) {
 				int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
+				int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 0);
 				lines.add(Text.translatable("item.fletching.hardness.info1").formatted(Formatting.DARK_PURPLE));
 				lines.add(Text.translatable("item.fletching.hardness.info2", hardness).formatted(Formatting.BLUE));
+				if (piercing > 0) {
+					lines.add(Text.translatable("item.fletching.piercing.info", piercing).formatted(Formatting.BLUE));
+				}
 			}
 		});
 

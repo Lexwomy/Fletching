@@ -17,4 +17,10 @@ public class FletchingComponents {
             Identifier.of(Fletching.MOD_ID, "hardness"),
             ComponentType.<Integer>builder().codec(Codec.INT).build()
     );
+
+    public static final ComponentType<Integer> PIERCING = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(Fletching.MOD_ID, "piercing"),
+            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    );
 }
