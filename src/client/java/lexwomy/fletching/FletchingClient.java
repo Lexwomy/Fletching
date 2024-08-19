@@ -1,12 +1,16 @@
 package lexwomy.fletching;
 
 import lexwomy.fletching.component.FletchingComponents;
+import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
+import lexwomy.fletching.renderer.PilumEntityRenderer;
+import lexwomy.fletching.tags.FletchingItemTags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.text.Text;
@@ -18,12 +22,14 @@ public class FletchingClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
-			if (stack.isIn(ItemTags.ARROWS)) {
+			if (stack.isIn(ItemTags.ARROWS) || stack.isIn(FletchingItemTags.PILUMS)) {
 				int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
 				lines.add(Text.translatable("item.fletching.hardness.info1").formatted(Formatting.DARK_PURPLE));
 				lines.add(Text.translatable("item.fletching.hardness.info2", hardness).formatted(Formatting.BLUE));
 			}
 		});
+
+		EntityRendererRegistry.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
 
 		registerModelPredicateProviders();
 	}

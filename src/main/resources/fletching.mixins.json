@@ -3,6 +3,7 @@
   "package": "lexwomy.fletching.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AddDefaultPilumMixin",
     "AddHardnessToCalcMixin",
     "AddStackingLogicToStatusEffectInstanceMixin",
     "ExposeHiddenEffectMixin"

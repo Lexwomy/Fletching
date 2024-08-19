@@ -1,6 +1,7 @@
 package lexwomy.fletching.item;
 
 import lexwomy.fletching.entity.PilumEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Item;
@@ -9,10 +10,15 @@ import net.minecraft.item.ProjectileItem;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class PilumItem extends Item implements ProjectileItem {
     public PilumItem(Item.Settings settings) {
         super(settings);
+    }
+
+    public PersistentProjectileEntity createPilum(World world, ItemStack stack, LivingEntity shooter, @Nullable ItemStack shotFrom) {
+        return new PilumEntity(world, shooter, stack.copyWithCount(1), shotFrom);
     }
 
     @Override

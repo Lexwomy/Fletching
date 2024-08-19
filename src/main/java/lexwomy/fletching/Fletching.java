@@ -3,6 +3,7 @@ package lexwomy.fletching;
 import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentEffectComponentTypes;
+import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.screen.FletchingScreenHandler;
 import lexwomy.fletching.tags.FletchingItemTags;
@@ -36,6 +37,7 @@ public class Fletching implements ModInitializer {
 		FletchingTags.initialize();
 		FletchingEffects.initialize();
 		FletchingEnchantmentEffectComponentTypes.initialize();
+		FletchingEntities.initialize();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.

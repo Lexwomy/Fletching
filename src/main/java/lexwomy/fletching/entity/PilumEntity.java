@@ -10,12 +10,16 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class PilumEntity extends PersistentProjectileEntity {
-    public PilumEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
+    public PilumEntity(EntityType<? extends PilumEntity> entityType, World world) {
         super(entityType, world);
     }
 
     public PilumEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack shotFrom) {
-        super(EntityType.ARROW, x, y, z, world, stack, shotFrom);
+        super(FletchingEntities.PILUM, x, y, z, world, stack, shotFrom);
+    }
+
+    public PilumEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
+        super(FletchingEntities.PILUM, owner, world, stack, shotFrom);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package lexwomy.fletching.item;
 
 import lexwomy.fletching.tags.FletchingItemTags;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
@@ -56,6 +58,49 @@ public class GreatbowItem extends RangedWeaponItem {
     @Override
     public int getRange() {
         return RANGE;
+    }
+
+    @Override
+    protected void shootAll(
+            ServerWorld world,
+            LivingEntity shooter,
+            Hand hand,
+            ItemStack stack,
+            List<ItemStack> projectiles,
+            float speed,
+            float divergence,
+            boolean critical,
+            @Nullable LivingEntity target
+    ) {
+        float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0F);
+        float g = projectiles.size() == 1 ? 0.0F : 2.0F * f / (float)(projectiles.size() - 1);
+        float h = (float)((projectiles.size() - 1) % 2) * g / 2.0F;
+        float i = 1.0F;
+
+        for (int j = 0; j < projectiles.size(); j++) {
+            ItemStack itemStack = (ItemStack)projectiles.get(j);
+            if (!itemStack.isEmpty()) {
+                float k = h + i * (float)((j + 1) / 2) * g;
+                i = -i;
+                ProjectileEntity projectileEntity = this.createPilumEntity(world, shooter, stack, itemStack, critical);
+                this.shoot(shooter, projectileEntity, j, speed, divergence, k, target);
+                world.spawnEntity(projectileEntity);
+                stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
+                if (stack.isEmpty()) {
+                    break;
+                }
+            }
+        }
+    }
+
+    protected ProjectileEntity createPilumEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
+        PilumItem pilumItem2 = projectileStack.getItem() instanceof PilumItem pilumItem ? pilumItem : (PilumItem) FletchingItems.FLINT_PILUM;
+        PersistentProjectileEntity persistentProjectileEntity = pilumItem2.createPilum(world, projectileStack, shooter, weaponStack);
+        if (critical) {
+            persistentProjectileEntity.setCritical(true);
+        }
+
+        return persistentProjectileEntity;
     }
 
     @Override
