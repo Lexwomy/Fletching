@@ -77,15 +77,14 @@ public class ShortbowItem extends RangedWeaponItem {
     ) {
 
         float radius = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0F);
-        Random random = shooter.getRandom();
 
         //Modified from the original to turn the spread from duckbill to cone
         for (int j = 0; j < projectiles.size(); j++) {
             ItemStack itemStack = projectiles.get(j);
             if (!itemStack.isEmpty()) {
-                float spread = (random.nextBetween(0, 10000) / 10000.0F) * radius;
+
                 ProjectileEntity projectileEntity = this.createArrowEntity(world, shooter, stack, itemStack, critical);
-                this.shoot(shooter, projectileEntity, j, speed, divergence, spread, target);
+                this.shoot(shooter, projectileEntity, j, speed, divergence, radius, target);
                 world.spawnEntity(projectileEntity);
                 stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
                 if (stack.isEmpty()) {
@@ -97,9 +96,12 @@ public class ShortbowItem extends RangedWeaponItem {
 
     //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
     @Override
-    protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float baseSpread, @Nullable LivingEntity target) {
-        projectile.setVelocity(shooter, shooter.getPitch() + baseSpread + getFrenzyInaccuracy(shooter),
-                shooter.getYaw() + baseSpread + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
+    protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float radius, @Nullable LivingEntity target) {
+        Random random = shooter.getRandom();
+        float yawSpread = (random.nextBetween(-10000, 10000) / 10000.0F) * radius;
+        float pitchSpread = (random.nextBetween(-10000, 10000) / 10000.0F) * radius;
+        projectile.setVelocity(shooter, shooter.getPitch() + pitchSpread + getFrenzyInaccuracy(shooter),
+                shooter.getYaw() + yawSpread + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
     }
 
     public float getPullProgress(int useTicks, LivingEntity user, ItemStack itemStack) {
