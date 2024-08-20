@@ -29,9 +29,9 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
     }
 
     @WrapOperation(method = "getUsingItemHandRenderType",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 0))
     private static boolean includeNewBowsToRenderCheck(ItemStack instance, Item item, Operation<Boolean> original) {
-        return !instance.isIn(FletchingItemTags.BOWS);
+        return original.call(instance, item) || instance.isIn(FletchingItemTags.BOWS);
     }
 
     //This modifies the fxx variable to match the draw time of the other bows

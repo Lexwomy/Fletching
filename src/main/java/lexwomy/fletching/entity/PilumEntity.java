@@ -2,6 +2,7 @@ package lexwomy.fletching.entity;
 
 import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.item.FletchingItems;
+import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.mixin.PierceLevelAccessor;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -19,12 +20,14 @@ public class PilumEntity extends PersistentProjectileEntity {
         super(FletchingEntities.PILUM, x, y, z, world, stack, shotFrom);
         int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 1);
         ((PierceLevelAccessor)this).invokeSetPierceLevel((byte)piercing);
+        this.setDamage(GreatbowItem.BASE_DAMAGE);
     }
 
     public PilumEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
         super(FletchingEntities.PILUM, owner, world, stack, shotFrom);
         int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 1);
         ((PierceLevelAccessor)this).invokeSetPierceLevel((byte)piercing);
+        this.setDamage(GreatbowItem.BASE_DAMAGE);
     }
 
     @Override
