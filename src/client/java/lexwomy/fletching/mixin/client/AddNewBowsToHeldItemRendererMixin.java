@@ -62,8 +62,8 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
             float draw_time = LongbowItem.DRAW_TIME;
             //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
             return mx / draw_time;
-        } else if (bow instanceof GreatbowItem) {
-            float draw_time = GreatbowItem.DRAW_TIME;
+        } else if (bow instanceof GreatbowItem greatbow) {
+            float draw_time = greatbow.getDrawTime(item, player);
             return mx / draw_time;
         }
         //TODO - Add greatbow logic

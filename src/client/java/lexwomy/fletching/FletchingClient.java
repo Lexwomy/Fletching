@@ -58,8 +58,9 @@ public class FletchingClient implements ClientModInitializer {
 			if (livingEntity == null) {
 				return 0.0F;
 			}
+			GreatbowItem greatbow = (GreatbowItem) itemStack.getItem();
 			return livingEntity.getActiveItem() != itemStack ? 0.0F :
-					(itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / GreatbowItem.DRAW_TIME;
+					(itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / greatbow.getDrawTime(itemStack, livingEntity);
 		});
 
 		ModelPredicateProviderRegistry.register(FletchingItems.GREATBOW, Identifier.ofVanilla("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {

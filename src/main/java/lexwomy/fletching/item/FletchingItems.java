@@ -65,4 +65,22 @@ public class FletchingItems {
                     .component(FletchingComponents.PIERCING, 1)),
             "flint_pilum"
     );
+
+    public static final Item IRON_PILUM = register(
+            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 3)
+                    .component(FletchingComponents.PIERCING, 2)),
+            "iron_pilum"
+    );
+
+    public static final Item DIAMOND_PILUM = register(
+            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 5)
+                    .component(FletchingComponents.PIERCING, 3)),
+            "diamond_pilum"
+    );
+
+    public static final Item NETHERITE_PILUM = register(
+            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 7)
+                    .component(FletchingComponents.PIERCING, 4)),
+            "netherite_pilum"
+    );
 }

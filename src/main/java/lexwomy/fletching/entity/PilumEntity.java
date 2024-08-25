@@ -18,13 +18,15 @@ public class PilumEntity extends PersistentProjectileEntity {
 
     public PilumEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack shotFrom) {
         super(FletchingEntities.PILUM, x, y, z, world, stack, shotFrom);
-        int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 1);
-        ((PierceLevelAccessor)this).invokeSetPierceLevel((byte)piercing);
-        this.setDamage(GreatbowItem.BASE_DAMAGE);
+        this.setPilumAttributes(stack);
     }
 
     public PilumEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
         super(FletchingEntities.PILUM, owner, world, stack, shotFrom);
+        this.setPilumAttributes(stack);
+    }
+
+    private void setPilumAttributes(ItemStack stack) {
         int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 1);
         ((PierceLevelAccessor)this).invokeSetPierceLevel((byte)piercing);
         this.setDamage(GreatbowItem.BASE_DAMAGE);

@@ -58,7 +58,8 @@ public abstract class RegisterNewBowsToClientPlayerMixin extends PlayerEntity {
 			draw_time = LongbowItem.DRAW_TIME;
 			fov_ref.set(0.25F);
 		} else if (itemStack.isOf(FletchingItems.GREATBOW)) {
-			draw_time = GreatbowItem.DRAW_TIME;
+			GreatbowItem bow = (GreatbowItem) itemStack.getItem();
+			draw_time = bow.getDrawTime(itemStack, (LivingEntity) (Object)this);
 			fov_ref.set(0.5F);
 		} else {
 			fov_ref.set(0.15F);

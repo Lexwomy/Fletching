@@ -1,5 +1,8 @@
 {
   "values": [
-    "fletching:flint_pilum"
+    "fletching:flint_pilum",
+    "fletching:iron_pilum",
+    "fletching:diamond_pilum",
+    "fletching:netherite_pilum"
   ]
 }

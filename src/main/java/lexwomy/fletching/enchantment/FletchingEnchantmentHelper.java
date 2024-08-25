@@ -10,6 +10,7 @@ import net.minecraft.enchantment.effect.EnchantmentValueEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
 public class FletchingEnchantmentHelper {
@@ -30,5 +31,13 @@ public class FletchingEnchantmentHelper {
             }
         }
         return mutableFloat.floatValue();
+    }
+
+    public static float increaseGreatbowVelocity(ItemStack stack, float velocity) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, FletchingEnchantmentTags.PHOTONIC_CHARGE)) {
+            return velocity * 1.8F;
+        } else {
+            return velocity;
+        }
     }
 }

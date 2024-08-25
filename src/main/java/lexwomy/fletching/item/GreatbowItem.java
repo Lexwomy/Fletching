@@ -1,5 +1,6 @@
 package lexwomy.fletching.item;
 
+import lexwomy.fletching.enchantment.FletchingEnchantmentHelper;
 import lexwomy.fletching.tags.FletchingItemTags;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -35,6 +37,14 @@ public class GreatbowItem extends RangedWeaponItem {
     @Override
     public Predicate<ItemStack> getProjectiles() {
         return GREATBOW_PROJECTILES;
+    }
+
+    public float getVelocity(ItemStack itemStack) {
+        return FletchingEnchantmentHelper.increaseGreatbowVelocity(itemStack, BASE_VELOCITY);
+    }
+
+    public float getDrawTime(ItemStack itemStack, LivingEntity user) {
+        return FletchingEnchantmentHelper.modifyDrawTime(user, itemStack, DRAW_TIME);
     }
 
     @Override
@@ -72,18 +82,12 @@ public class GreatbowItem extends RangedWeaponItem {
             boolean critical,
             @Nullable LivingEntity target
     ) {
-        float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0F);
-        float g = projectiles.size() == 1 ? 0.0F : 2.0F * f / (float)(projectiles.size() - 1);
-        float h = (float)((projectiles.size() - 1) % 2) * g / 2.0F;
-        float i = 1.0F;
 
         for (int j = 0; j < projectiles.size(); j++) {
-            ItemStack itemStack = (ItemStack)projectiles.get(j);
+            ItemStack itemStack = projectiles.get(j);
             if (!itemStack.isEmpty()) {
-                float k = h + i * (float)((j + 1) / 2) * g;
-                i = -i;
                 ProjectileEntity projectileEntity = this.createPilumEntity(world, shooter, stack, itemStack, critical);
-                this.shoot(shooter, projectileEntity, j, speed, divergence, k, target);
+                this.shoot(shooter, projectileEntity, j, speed, 0, divergence, target);
                 world.spawnEntity(projectileEntity);
                 stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
                 if (stack.isEmpty()) {
@@ -108,8 +112,8 @@ public class GreatbowItem extends RangedWeaponItem {
         projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, speed, divergence);
     }
 
-    public static float getPullProgress(int useTicks) {
-        float f = (float)useTicks / DRAW_TIME;
+    public float getPullProgress(int useTicks, LivingEntity user, ItemStack itemStack) {
+        float f = (float)useTicks / this.getDrawTime(itemStack, user);
         f = (f * f + f * 2.0F) / 3.0F;
         if (f > 1.0F) {
             f = 1.0F;
@@ -129,11 +133,11 @@ public class GreatbowItem extends RangedWeaponItem {
             ItemStack itemStack = playerEntity.getProjectileType(stack);
             if (!itemStack.isEmpty()) {
                 int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
-                float f = getPullProgress(i);
+                float f = this.getPullProgress(i, user, stack);
                 if (!((double)f < 0.1)) {
                     List<ItemStack> list = load(stack, itemStack, playerEntity);
                     if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
-                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
+                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * this.getVelocity(stack), 1.0F, f == 1.0F, null);
                     }
 
                     world.playSound(
