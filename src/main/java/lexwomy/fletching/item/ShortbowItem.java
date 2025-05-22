@@ -30,7 +30,7 @@ public class ShortbowItem extends RangedWeaponItem {
     public static final int RANGE = 10;
     private static final Random RANDOM = Random.create();
 
-    public ShortbowItem(Settings settings) {
+    public ShortbowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 

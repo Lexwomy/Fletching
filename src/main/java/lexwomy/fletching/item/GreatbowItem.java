@@ -30,7 +30,7 @@ public class GreatbowItem extends RangedWeaponItem {
     public static final float BASE_DAMAGE = 3.0F;
     public static final int RANGE = 25;
 
-    public GreatbowItem(Settings settings) {
+    public GreatbowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 

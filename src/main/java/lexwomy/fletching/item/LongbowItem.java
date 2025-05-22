@@ -29,7 +29,7 @@ public class LongbowItem extends RangedWeaponItem {
     public static final double DAMAGE = 2.0F;
     //private int FOCUS = 0;
 
-    public LongbowItem(Settings settings) {
+    public LongbowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 

@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "fletching",
 	"version": "${version}",
-	"name": "Fletching Table",
+	"name": "Fletching",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-          "lexwomy.fletching.Fletching"
+			"lexwomy.fletching.Fletching"
 		],
 		"client": [
           "lexwomy.fletching.FletchingClient"
@@ -33,8 +33,8 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

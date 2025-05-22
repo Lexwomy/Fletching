@@ -3,11 +3,11 @@
   "package": "lexwomy.fletching.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AddDefaultPilumMixin",
-    "AddHardnessToCalcMixin",
-    "AddStackingLogicToStatusEffectInstanceMixin",
-    "ExposeHiddenEffectMixin",
-    "PierceLevelAccessor"
+    "lexwomy.fletching_backup.mixin.AddDefaultPilumMixin",
+    "lexwomy.fletching_backup.mixin.AddHardnessToCalcMixin",
+    "lexwomy.fletching_backup.mixin.AddStackingLogicToStatusEffectInstanceMixin",
+    "lexwomy.fletching_backup.mixin.ExposeHiddenEffectMixin",
+    "lexwomy.fletching_backup.mixin.PierceLevelAccessor"
   ],
   "minMixinExtrasVersion": "0.5.0-beta.1",
   "injectors": {

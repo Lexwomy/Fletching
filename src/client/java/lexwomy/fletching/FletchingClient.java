@@ -1,13 +1,13 @@
 package lexwomy.fletching;
 
-import lexwomy.fletching.component.FletchingComponents;
-import lexwomy.fletching.entity.FletchingEntities;
-import lexwomy.fletching.item.FletchingItems;
-import lexwomy.fletching.item.GreatbowItem;
-import lexwomy.fletching.item.LongbowItem;
-import lexwomy.fletching.item.ShortbowItem;
+import lexwomy.fletching_backup.component.FletchingComponents;
+import lexwomy.fletching_backup.entity.FletchingEntities;
+import lexwomy.fletching_backup.item.FletchingItems;
+import lexwomy.fletching_backup.item.GreatbowItem;
+import lexwomy.fletching_backup.item.LongbowItem;
+import lexwomy.fletching_backup.item.ShortbowItem;
 import lexwomy.fletching.renderer.PilumEntityRenderer;
-import lexwomy.fletching.tags.FletchingItemTags;
+import lexwomy.fletching_backup.tags.FletchingItemTags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
