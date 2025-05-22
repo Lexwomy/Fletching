@@ -1,31 +1,59 @@
 package lexwomy.fletching.item;
 
+import lexwomy.fletching.effect.FletchingEffects;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
-public class LongbowItem extends BowItem {
+//TODO Add compatibility by using a custom event to add piercing enchantment to longbow
+public class LongbowItem extends RangedWeaponItem {
     public static final int RANGE = 20;
     public static final float DRAW_TIME = 50.0F;
     public static final float BASE_VELOCITY = 3.5F;
-    private int FOCUS = 0;
+    public static final double DAMAGE = 2.0F;
+    //private int FOCUS = 0;
 
     public LongbowItem(Settings settings) {
         super(settings);
     }
 
-    public float getFocusedVelocity() {
-        return BASE_VELOCITY + (0.1F * (float)FOCUS);
+    public double getFocusedDamage(LivingEntity user) {
+        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FOCUS);
+        int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        if (focus_stack > 8) {
+            focus_stack = 8;
+        }
+        return DAMAGE + (0.5 * focus_stack);
+    }
+
+    public float getFocusedDivergence(LivingEntity user) {
+        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FOCUS);
+        int focus_stack = effect == null ? 0 : effect.getAmplifier() + 1;
+        if (focus_stack > 8) {
+            focus_stack = 8;
+        }
+        return 1.0F - (0.125F * focus_stack);
+    }
+
+    @Override
+    public Predicate<ItemStack> getProjectiles() {
+        return BOW_PROJECTILES;
     }
 
     @Override
@@ -35,12 +63,14 @@ public class LongbowItem extends BowItem {
 
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-        super.shoot(shooter, projectile, index, speed, divergence, yaw, target);
+        //((ExposeArrowDamageMixin) projectile).setDamage(getFocusedDamage(shooter));
+        ((PersistentProjectileEntity) projectile).setDamage(getFocusedDamage(shooter));
+        projectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0.0F, speed, divergence);
     }
 
     public static float getPullProgress(int useTicks) {
         float f = (float)useTicks / DRAW_TIME;
-        f = (f * f + f * 1.5F) / 3.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
         if (f > 1.0F) {
             f = 1.0F;
         }
@@ -58,7 +88,7 @@ public class LongbowItem extends BowItem {
                 if (!((double)f < 0.1)) {
                     List<ItemStack> list = load(stack, itemStack, playerEntity);
                     if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
-                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
+                        this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * BASE_VELOCITY, this.getFocusedDivergence(user), f == 1.0F, null);
                     }
 
                     world.playSound(
@@ -74,6 +104,28 @@ public class LongbowItem extends BowItem {
                     playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
                 }
             }
+        }
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        return 72000;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BOW;
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        ItemStack itemStack = user.getStackInHand(hand);
+        boolean bl = !user.getProjectileType(itemStack).isEmpty();
+        if (!user.isInCreativeMode() && !bl) {
+            return TypedActionResult.fail(itemStack);
+        } else {
+            user.setCurrentHand(hand);
+            return TypedActionResult.consume(itemStack);
         }
     }
 }

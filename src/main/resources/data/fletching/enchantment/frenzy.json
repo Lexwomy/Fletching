@@ -1,0 +1,60 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.fletching.frenzy"
+  },
+  "effects": {
+    "minecraft:post_attack": [
+      {
+        "affected": "attacker",
+        "effect": {
+          "type": "minecraft:apply_mob_effect",
+          "max_amplifier": {
+            "type": "minecraft:linear",
+            "base": 0,
+            "per_level_above_first": 1.0
+          },
+          "max_duration": {
+            "type": "minecraft:linear",
+            "base": 20,
+            "per_level_above_first": -5
+          },
+          "min_amplifier": {
+            "type": "minecraft:linear",
+            "base": 0,
+            "per_level_above_first": 1.0
+          },
+          "min_duration": {
+            "type": "minecraft:linear",
+            "base": 20,
+            "per_level_above_first": -5
+          },
+          "to_apply": "fletching:frenzy"
+        },
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "direct_attacker",
+          "predicate": {
+            "type": "#minecraft:arrows"
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "minecraft:infinity",
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 8
+  },
+  "max_level": 4,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 8
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "fletching:shortbow",
+  "weight": 3
+}

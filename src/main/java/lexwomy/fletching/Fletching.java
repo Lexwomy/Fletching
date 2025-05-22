@@ -1,23 +1,22 @@
 package lexwomy.fletching;
 
 import lexwomy.fletching.component.FletchingComponents;
-import lexwomy.fletching.effect.FrenzyEffect;
+import lexwomy.fletching.effect.FletchingEffects;
+import lexwomy.fletching.enchantment.FletchingEnchantmentEffectComponentTypes;
+import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.screen.FletchingScreenHandler;
+import lexwomy.fletching.tags.FletchingItemTags;
+import lexwomy.fletching.tags.FletchingTags;
 import net.fabricmc.api.ModInitializer;
 
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraft.item.Item;
 
 public class Fletching implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -27,9 +26,6 @@ public class Fletching implements ModInitializer {
 	public static final String MOD_ID = "fletching";
 
 	public static final ScreenHandlerType<FletchingScreenHandler> FLETCHING = new ScreenHandlerType<>(FletchingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static final TagKey<Item> BOWS = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "bows"));
-	public static final StatusEffect FRENZY_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "frenzy"), new FrenzyEffect());
-	public static final RegistryEntry<StatusEffect> FRENZY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "frenzy"), new FrenzyEffect());
 
 	@Override
 	public void onInitialize() {
@@ -38,6 +34,10 @@ public class Fletching implements ModInitializer {
 
 		FletchingComponents.initialize();
 		FletchingItems.initialize();
+		FletchingTags.initialize();
+		FletchingEffects.initialize();
+		FletchingEnchantmentEffectComponentTypes.initialize();
+		FletchingEntities.initialize();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.

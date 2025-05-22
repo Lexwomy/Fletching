@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "fletching:frenzy",
+    "fletching:crippling",
+    "fletching:hunter",
+    "fletching:focus",
+    "fletching:scattershot"
+  ]
+}
