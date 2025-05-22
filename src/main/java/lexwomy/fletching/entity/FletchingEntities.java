@@ -6,18 +6,21 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public class FletchingEntities {
+    public static final RegistryKey<EntityType<?>> PILUM_KEY = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Fletching.MOD_ID, "pilum"));
     public static final EntityType<PilumEntity> PILUM = Registry.register(
             Registries.ENTITY_TYPE,
-            Identifier.of(Fletching.MOD_ID, "pilum"),
+            PILUM_KEY,
             EntityType.Builder.<PilumEntity>create(PilumEntity::new, SpawnGroup.MISC)
                     .dimensions(1.0F, 0.5F)
                     .eyeHeight(0.13F)
                     .maxTrackingRange(4)
                     .trackingTickInterval(20)
-                    .build()
+                    .build(PILUM_KEY)
     );
 
     public static void initialize() {

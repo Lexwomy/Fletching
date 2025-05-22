@@ -8,13 +8,13 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +79,7 @@ public class LongbowItem extends RangedWeaponItem {
     }
 
     @Override
-    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (user instanceof PlayerEntity playerEntity) {
             ItemStack itemStack = playerEntity.getProjectileType(stack);
             if (!itemStack.isEmpty()) {
@@ -105,6 +105,7 @@ public class LongbowItem extends RangedWeaponItem {
                 }
             }
         }
+        return false;
     }
 
     @Override
@@ -118,14 +119,14 @@ public class LongbowItem extends RangedWeaponItem {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (!user.isInCreativeMode() && !bl) {
-            return TypedActionResult.fail(itemStack);
+            return ActionResult.FAIL;
         } else {
             user.setCurrentHand(hand);
-            return TypedActionResult.consume(itemStack);
+            return ActionResult.CONSUME;
         }
     }
 }

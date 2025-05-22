@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 public class FletchingEffects {
     public static final StatusEffect FRENZY_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of(Fletching.MOD_ID, "frenzy"),
-            new FrenzyEffect().addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
+            new FrenzyEffect().addAttributeModifier(EntityAttributes.MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),
                     0.02F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final StatusEffect FOCUS_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of(Fletching.MOD_ID, "focus"),
             new FocusEffect());
