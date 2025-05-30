@@ -9,15 +9,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
+import java.util.function.Function;
+
 public class FletchingItems {
-    public static Item register(Item item, String id) {
-        // Create the identifier for the item.
-        Identifier itemID = Identifier.of(Fletching.MOD_ID, id);
+    public static Item register(String id, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
+        // Create the registry key/identifier for the item.
+        RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Fletching.MOD_ID, id));
+
+        Item item = itemFactory.apply(settings.registryKey(itemKey));
 
         // Register the item.
-        return Registry.register(Registries.ITEM, itemID, item);
+        return Registry.register(Registries.ITEM, itemKey, item);
     }
 
     public static void initialize() {
@@ -31,56 +37,66 @@ public class FletchingItems {
     }
 
     public static final Item LONGBOW = register(
-            new LongbowItem(new Item.Settings().maxDamage(384)),
-            "longbow"
+            "longbow",
+            LongbowItem::new,
+            new Item.Settings().maxDamage(384)
     );
 
     public static final Item SHORTBOW = register(
-            new ShortbowItem(new Item.Settings().maxDamage(512)),
-            "shortbow"
+            "shortbow",
+            ShortbowItem::new,
+            new Item.Settings().maxDamage(512)
     );
 
     public static final Item GREATBOW = register(
-            new GreatbowItem(new Item.Settings().maxDamage(512)),
-            "greatbow"
+            "greatbow",
+            GreatbowItem::new,
+            new Item.Settings().maxDamage(512)
     );
 
     public static final Item IRON_ARROW = register(
-            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)),
-            "iron_arrow"
+            "iron_arrow",
+            ArrowItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 1)
     );
 
     public static final Item DIAMOND_ARROW = register(
-            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 3)),
-            "diamond_arrow"
+            "diamond_arrow",
+            ArrowItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 3)
     );
 
     public static final Item NETHERITE_ARROW = register(
-            new ArrowItem(new Item.Settings().component(FletchingComponents.HARDNESS, 5)),
-            "netherite_arrow"
+            "netherite_arrow",
+            ArrowItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 5)
     );
 
     public static final Item FLINT_PILUM = register(
-            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 1)
-                    .component(FletchingComponents.PIERCING, 1)),
-            "flint_pilum"
+            "flint_pilum",
+            PilumItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 1)
+                    .component(FletchingComponents.PIERCING, 1)
     );
 
     public static final Item IRON_PILUM = register(
-            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 3)
-                    .component(FletchingComponents.PIERCING, 2)),
-            "iron_pilum"
+            "iron_pilum",
+            PilumItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 3)
+                    .component(FletchingComponents.PIERCING, 2)
     );
 
     public static final Item DIAMOND_PILUM = register(
-            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 5)
-                    .component(FletchingComponents.PIERCING, 3)),
-            "diamond_pilum"
+            "diamond_pilum",
+            PilumItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 5)
+                    .component(FletchingComponents.PIERCING, 3)
     );
 
     public static final Item NETHERITE_PILUM = register(
-            new PilumItem(new Item.Settings().component(FletchingComponents.HARDNESS, 7)
-                    .component(FletchingComponents.PIERCING, 4)),
-            "netherite_pilum"
+            "netherite_pilum",
+            PilumItem::new,
+            new Item.Settings().component(FletchingComponents.HARDNESS, 7)
+                    .component(FletchingComponents.PIERCING, 4)
     );
 }
