@@ -3,6 +3,7 @@ package lexwomy.fletching.mixin.client;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import lexwomy.fletching.Fletching;
 import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
@@ -15,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -34,6 +36,7 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
         return original.call(instance, item) || instance.isIn(FletchingItemTags.BOWS);
     }
 
+    @Debug(export = true)
     //This modifies the fxx variable to match the draw time of the other bows
     //This method controls the movement/transformation of the 3D item model when pulling the bow back
     @ModifyVariable(method = "renderFirstPersonItem",
@@ -41,11 +44,11 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
                             from = @At(
                                     value = "INVOKE",
                                     target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
-                                    ordinal = 5),
+                                    ordinal = 4),
                             to = @At(
                                     value = "INVOKE",
                                     target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
-                                    ordinal = 6)),
+                                    ordinal = 5)),
                     at = @At(value = "STORE", opcode = Opcodes.FSTORE, ordinal = 0),
                     ordinal = 5)
     private float adjustDrawTimeForPullBack(float original, AbstractClientPlayerEntity player, float tickDelta,
@@ -56,7 +59,7 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
         float mx = (float)item.getMaxUseTime(player) - ((float)player.getItemUseTimeLeft() - tickDelta + 1.0F);
         if (bow instanceof ShortbowItem shortbow) {
             float draw_time = shortbow.getFrenzyDrawTime(player, item);
-            //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}", original, mx, mx / draw_time);
+            //Fletching.LOGGER.info("fxx original: {}, mx: {}, new fxx: {}, draw_time: {}", original, mx, mx / draw_time, draw_time);
             return mx / draw_time;
         } else if (bow instanceof LongbowItem) {
             float draw_time = LongbowItem.DRAW_TIME;
