@@ -36,7 +36,6 @@ public abstract class AddNewBowsToHeldItemRendererMixin {
         return original.call(instance, item) || instance.isIn(FletchingItemTags.BOWS);
     }
 
-    @Debug(export = true)
     //This modifies the fxx variable to match the draw time of the other bows
     //This method controls the movement/transformation of the 3D item model when pulling the bow back
     @ModifyVariable(method = "renderFirstPersonItem",

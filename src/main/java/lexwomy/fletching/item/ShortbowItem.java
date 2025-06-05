@@ -1,5 +1,6 @@
 package lexwomy.fletching.item;
 
+import lexwomy.fletching.Fletching;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -16,6 +17,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -48,14 +50,18 @@ public class ShortbowItem extends RangedWeaponItem {
 
         float draw_time = DRAW_TIME - (0.25F * frenzy_stack);
         draw_time = FletchingEnchantmentHelper.modifyDrawTime(user, itemStack, draw_time);
+        Fletching.LOGGER.info("Frenzy {} yielding new draw time {}, rounded to {}", frenzy_stack, draw_time, Math.round(draw_time));
         return Math.round(draw_time);
     }
 
     public float getFrenzyInaccuracy(LivingEntity user) {
         StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
-        int range = Math.round(0.125F * frenzy_stack);
-        return range != 0 ? RANDOM.nextBetweenExclusive(-range, range) : 0;
+        if (frenzy_stack > 40) {
+            frenzy_stack = 40;
+        }
+        Fletching.LOGGER.info("Frenzy {} yielding inaccuracy {}", frenzy_stack, 0.125F * frenzy_stack);
+        return 0.125F * frenzy_stack;
     }
 
     @Override
@@ -94,14 +100,22 @@ public class ShortbowItem extends RangedWeaponItem {
         }
     }
 
+    // Returns [yaw, pitch]
+    private float[] getSpread(float radius) {
+        float angle = RANDOM.nextFloat() * 2 * MathHelper.PI;
+        float spread = RANDOM.nextFloat() * radius;
+
+        return new float[] { MathHelper.cos(angle) * spread, MathHelper.sin(angle) * spread };
+    }
+
     //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
+    //Spread should only exist on scattershot, and in the case of frenzy, will increase the spread of scattershot instead
+    //TODO - fix frenzy to increase radius for both scenarios
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float radius, @Nullable LivingEntity target) {
-        Random random = shooter.getRandom();
-        float yawSpread = (random.nextBetween(-10000, 10000) / 10000.0F) * radius;
-        float pitchSpread = (random.nextBetween(-10000, 10000) / 10000.0F) * radius;
-        projectile.setVelocity(shooter, shooter.getPitch() + pitchSpread + getFrenzyInaccuracy(shooter),
-                shooter.getYaw() + yawSpread + getFrenzyInaccuracy(shooter), 0.0F, speed, divergence);
+        float[] spread = getSpread(radius + getFrenzyInaccuracy(shooter));
+        projectile.setVelocity(shooter, shooter.getPitch() + spread[1],
+                shooter.getYaw() + spread[0], 0.0F, speed, divergence);
     }
 
     public float getPullProgress(int useTicks, LivingEntity user, ItemStack itemStack) {
@@ -146,8 +160,6 @@ public class ShortbowItem extends RangedWeaponItem {
         }
         return false;
     }
-
-
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {

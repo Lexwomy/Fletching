@@ -6,11 +6,14 @@ import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
+import lexwomy.fletching.render.item.property.numeric.UsePercentProperty;
 import lexwomy.fletching.renderer.PilumEntityRenderer;
 import lexwomy.fletching.tags.FletchingItemTags;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.render.item.property.numeric.NumericProperties;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -30,6 +33,11 @@ public class FletchingClient implements ClientModInitializer {
 					lines.add(Text.translatable("item.fletching.piercing.info", piercing).formatted(Formatting.BLUE));
 				}
 			}
+		});
+
+		ClientLifecycleEvents.CLIENT_STARTED.register((minecraftClient) -> {
+			NumericProperties.ID_MAPPER.put(Identifier.of(Fletching.MOD_ID, "use_percent"), UsePercentProperty.CODEC);
+			Fletching.LOGGER.info("Registered UsePercent property!");
 		});
 
 		EntityRendererRegistry.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
