@@ -6,6 +6,7 @@
     "AddDefaultPilumMixin",
     "AddHardnessToCalcMixin",
     "AddStackingLogicToStatusEffectInstanceMixin",
+    "DisablePiercingFromShrapnelMixin",
     "ExposeHiddenEffectMixin",
     "PierceLevelAccessor"
   ],

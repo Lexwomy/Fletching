@@ -14,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+//TODO - fix frenzy stacking logic, it appears to be inconsistent right now
 @Mixin(StatusEffectInstance.class)
 public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     //Allows stacking effects to bypass normal time checks when adding hidden effects
@@ -36,7 +37,7 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
     @Expression("? > this.amplifier")
     @ModifyExpressionValue(method = "upgrade", at = @At("MIXINEXTRAS:EXPRESSION"))
     private boolean allowStackingToBypassAmplifierCheck(boolean original, StatusEffectInstance that) {
-        boolean stacking = that.equals(FletchingEffects.FRENZY) || that.equals(FletchingEffects.FOCUS);
+        boolean stacking = that.equals(FletchingEffects.FRENZY);
         return original || stacking;
     }
 
@@ -50,16 +51,8 @@ public abstract class AddStackingLogicToStatusEffectInstanceMixin {
                 new_amplifier = 39;
             }
             original.call(instance, new_amplifier);
-        } else if (that.equals(FletchingEffects.FOCUS)) {
-            int new_amplifier = value + instance.getAmplifier() + 1;
-            if (new_amplifier > 7) {
-                new_amplifier = 7;
-            }
-            original.call(instance, new_amplifier);
         } else {
             original.call(instance, value);
         }
     }
-
-
 }

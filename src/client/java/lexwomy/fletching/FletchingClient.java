@@ -8,6 +8,7 @@ import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
 import lexwomy.fletching.render.item.property.numeric.UsePercentProperty;
 import lexwomy.fletching.renderer.PilumEntityRenderer;
+import lexwomy.fletching.renderer.ShrapnelEntityRenderer;
 import lexwomy.fletching.tags.FletchingItemTags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -41,7 +42,7 @@ public class FletchingClient implements ClientModInitializer {
 		});
 
 		EntityRendererRegistry.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
-
+		EntityRendererRegistry.register(FletchingEntities.SHRAPNEL, ShrapnelEntityRenderer::new);
 		//registerModelPredicateProviders();
 	}
 

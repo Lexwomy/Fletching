@@ -4,12 +4,14 @@ import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentEffectComponentTypes;
 import lexwomy.fletching.entity.FletchingEntities;
+import lexwomy.fletching.entity.damage.FletchingDamageTypes;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.screen.FletchingScreenHandler;
 import lexwomy.fletching.tags.FletchingItemTags;
 import lexwomy.fletching.tags.FletchingTags;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
@@ -38,9 +40,14 @@ public class Fletching implements ModInitializer {
 		FletchingEffects.initialize();
 		FletchingEnchantmentEffectComponentTypes.initialize();
 		FletchingEntities.initialize();
+		FletchingDamageTypes.initialize();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		DynamicRegistrySetupCallback.EVENT.register((dynamicRegistryView) -> {
+
+		});
 
 		LOGGER.info("Hello Fabric world!");
 	}

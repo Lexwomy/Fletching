@@ -12,6 +12,10 @@ public class FletchingEnchantmentEffectComponentTypes {
             Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE,
             Identifier.of(Fletching.MOD_ID, "draw_time"),
             ComponentType.<EnchantmentValueEffect>builder().codec(EnchantmentValueEffect.CODEC).build());
+    public static ComponentType<EnchantmentValueEffect> INACCURACY = Registry.register(
+            Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE,
+            Identifier.of(Fletching.MOD_ID, "inaccuracy"),
+            ComponentType.<EnchantmentValueEffect>builder().codec(EnchantmentValueEffect.CODEC).build());
     public static void initialize() {
         Fletching.LOGGER.info("Fletching enchantment effect component types initialized!");
     }

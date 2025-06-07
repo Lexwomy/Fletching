@@ -33,6 +33,32 @@ public class FletchingEnchantmentHelper {
         return mutableFloat.floatValue();
     }
 
+    public static float modifyInaccuracy(LivingEntity user, ItemStack stack, float radius) {
+        MutableFloat mutableFloat = new MutableFloat(radius);
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, FletchingEnchantmentTags.MODIFIES_ACCURACY)) {
+            ItemEnchantmentsComponent itemEnchantmentsComponent = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+            for (Object2IntMap.Entry<RegistryEntry<Enchantment>> entry : itemEnchantmentsComponent.getEnchantmentEntries()) {
+                Enchantment enchantment = entry.getKey().value();
+                EnchantmentValueEffect enchantmentValueEffect = enchantment.effects().get(FletchingEnchantmentEffectComponentTypes.INACCURACY);
+                if (enchantmentValueEffect != null) {
+                    mutableFloat.setValue(enchantmentValueEffect.apply(entry.getIntValue(), user.getRandom(), mutableFloat.floatValue()));
+                }
+            }
+        }
+        return mutableFloat.floatValue();
+    }
+
+    public static boolean hasEnchantment(ItemStack stack, Text name) {
+        ItemEnchantmentsComponent itemEnchantmentsComponent = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> entry : itemEnchantmentsComponent.getEnchantmentEntries()) {
+            Enchantment enchantment = entry.getKey().value();
+            if (enchantment.description().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static float increaseGreatbowVelocity(ItemStack stack, float velocity) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, FletchingEnchantmentTags.PHOTONIC_CHARGE)) {
             return velocity * 1.8F;

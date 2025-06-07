@@ -3,10 +3,11 @@ package lexwomy.fletching.item;
 import lexwomy.fletching.Fletching;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentHelper;
+import lexwomy.fletching.entity.ShrapnelEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
@@ -15,6 +16,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -30,6 +32,7 @@ public class ShortbowItem extends RangedWeaponItem {
     public static final float DRAW_TIME = 15.0F;
     public static final float BASE_VELOCITY = 1.75F;
     public static final int RANGE = 10;
+    public static final int SHRAPNEL_COUNT = 5;
     private static final Random RANDOM = Random.create();
 
     public ShortbowItem(net.minecraft.item.Item.Settings settings) {
@@ -48,8 +51,8 @@ public class ShortbowItem extends RangedWeaponItem {
             frenzy_stack = 40;
         }
 
-        float draw_time = DRAW_TIME - (0.25F * frenzy_stack);
-        draw_time = FletchingEnchantmentHelper.modifyDrawTime(user, itemStack, draw_time);
+        float draw_time = FletchingEnchantmentHelper.modifyDrawTime(user, itemStack, DRAW_TIME);
+        draw_time -= 0.25F * frenzy_stack;
         Fletching.LOGGER.info("Frenzy {} yielding new draw time {}, rounded to {}", frenzy_stack, draw_time, Math.round(draw_time));
         return Math.round(draw_time);
     }
@@ -61,7 +64,7 @@ public class ShortbowItem extends RangedWeaponItem {
             frenzy_stack = 40;
         }
         Fletching.LOGGER.info("Frenzy {} yielding inaccuracy {}", frenzy_stack, 0.125F * frenzy_stack);
-        return 0.125F * frenzy_stack;
+        return 0.25F * frenzy_stack;
     }
 
     @Override
@@ -82,22 +85,39 @@ public class ShortbowItem extends RangedWeaponItem {
             @Nullable LivingEntity target
     ) {
 
-        float radius = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0F);
+        float radius = FletchingEnchantmentHelper.modifyInaccuracy(shooter, stack, 0) + getFrenzyInaccuracy(shooter);
+        boolean isScattershot = FletchingEnchantmentHelper.hasEnchantment(stack, Text.translatable("enchantment.fletching.scattershot"));
+        // To counteract forced multishot, scattershot will inherit only the first projectile
+        if (isScattershot && !projectiles.isEmpty()) {
+            ItemStack itemStack = projectiles.getFirst();
+            for (int i = 0; i < SHRAPNEL_COUNT; i++) {
+                ProjectileEntity shrapnelEntity = createShrapnelEntity(world, shooter, stack, itemStack, critical);
+                this.shoot(shooter, shrapnelEntity, i, speed, divergence, radius, target);
+                world.spawnEntity(shrapnelEntity);
+            }
+            // Scattershot will consume twice the durability per shot
+            stack.damage(this.getWeaponStackDamage(itemStack) * 2, shooter, LivingEntity.getSlotForHand(hand));
+        } else {
+            for (int j = 0; j < projectiles.size(); j++) {
+                ItemStack itemStack = projectiles.get(j);
+                if (!itemStack.isEmpty()) {
 
-        //Modified from the original to turn the spread from duckbill to cone
-        for (int j = 0; j < projectiles.size(); j++) {
-            ItemStack itemStack = projectiles.get(j);
-            if (!itemStack.isEmpty()) {
-
-                ProjectileEntity projectileEntity = this.createArrowEntity(world, shooter, stack, itemStack, critical);
-                this.shoot(shooter, projectileEntity, j, speed, divergence, radius, target);
-                world.spawnEntity(projectileEntity);
-                stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
-                if (stack.isEmpty()) {
-                    break;
+                    ProjectileEntity projectileEntity = this.createArrowEntity(world, shooter, stack, itemStack, critical);
+                    this.shoot(shooter, projectileEntity, j, speed, divergence, radius, target);
+                    world.spawnEntity(projectileEntity);
+                    stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
+                    if (stack.isEmpty()) {
+                        break;
+                    }
                 }
             }
         }
+    }
+
+    protected ProjectileEntity createShrapnelEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
+        PersistentProjectileEntity shrapnelEntity = new ShrapnelEntity(world, shooter, projectileStack, weaponStack);
+        shrapnelEntity.setCritical(critical);
+        return shrapnelEntity;
     }
 
     // Returns [yaw, pitch]
@@ -110,10 +130,9 @@ public class ShortbowItem extends RangedWeaponItem {
 
     //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
     //Spread should only exist on scattershot, and in the case of frenzy, will increase the spread of scattershot instead
-    //TODO - fix frenzy to increase radius for both scenarios
     @Override
     protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float radius, @Nullable LivingEntity target) {
-        float[] spread = getSpread(radius + getFrenzyInaccuracy(shooter));
+        float[] spread = getSpread(radius);
         projectile.setVelocity(shooter, shooter.getPitch() + spread[1],
                 shooter.getYaw() + spread[0], 0.0F, speed, divergence);
     }

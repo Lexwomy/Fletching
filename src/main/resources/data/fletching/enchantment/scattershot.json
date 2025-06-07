@@ -8,7 +8,15 @@
       "type": "minecraft:add",
       "value": {
         "type": "minecraft:linear",
-        "base": 2.5,
+        "base": 10,
+        "per_level_above_first": 0
+      }
+    },
+    "fletching:inaccuracy": {
+      "type": "minecraft:add",
+      "value": {
+        "type": "minecraft:linear",
+        "base": 5,
         "per_level_above_first": 0
       }
     }
