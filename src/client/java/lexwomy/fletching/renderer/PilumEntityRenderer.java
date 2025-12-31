@@ -1,13 +1,14 @@
 package lexwomy.fletching.renderer;
 
 import lexwomy.fletching.entity.PilumEntity;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.ProjectileEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.Identifier;
 
-public class PilumEntityRenderer extends ProjectileEntityRenderer<PilumEntity, PilumEntityRenderState> {
+public class PilumEntityRenderer extends EntityRenderer<PilumEntity, PilumEntityRenderState> {
 
-    public PilumEntityRenderer(EntityRendererFactory.Context context) {
+
+    public PilumEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -17,8 +18,7 @@ public class PilumEntityRenderer extends ProjectileEntityRenderer<PilumEntity, P
     }
 
     //TODO - create custom pilum model later
-    @Override
-    protected Identifier getTexture(PilumEntityRenderState state) {
-        return Identifier.ofVanilla("textures/entity/projectiles/arrow.png");
+    protected Identifier getTextureLocation(PilumEntityRenderState state) {
+        return Identifier.withDefaultNamespace("textures/entity/projectiles/arrow.png");
     }
 }

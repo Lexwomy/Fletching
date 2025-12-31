@@ -1,16 +1,13 @@
 package lexwomy.fletching.effect;
 
 import lexwomy.fletching.Fletching;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 
-public class FrenzyEffect extends StatusEffect {
+public class FrenzyEffect extends MobEffect {
     public FrenzyEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0x9b870c);
+        super(MobEffectCategory.BENEFICIAL, 0x9b870c);
     }
 
     //TODO - Make custom particle effect?
@@ -31,8 +28,8 @@ public class FrenzyEffect extends StatusEffect {
     //Upon receiving the effect, apply speed based on the amplifier
     //The shortbow will check any active frenzy effects and adjust draw time
     @Override
-    public void onApplied(LivingEntity entity, int amplifier) {
-        super.onApplied(entity, amplifier);
+    public void onEffectStarted(LivingEntity entity, int amplifier) {
+        super.onEffectStarted(entity, amplifier);
 
 
 //        this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Identifier.of(Fletching.MOD_ID, "frenzy"),

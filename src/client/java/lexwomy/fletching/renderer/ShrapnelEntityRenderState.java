@@ -1,8 +1,8 @@
 package lexwomy.fletching.renderer;
 
-import net.minecraft.client.render.entity.state.ProjectileEntityRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 
-public class ShrapnelEntityRenderState extends ProjectileEntityRenderState {
+public class ShrapnelEntityRenderState extends EntityRenderState {
     public ShrapnelEntityRenderState() {
 
     }

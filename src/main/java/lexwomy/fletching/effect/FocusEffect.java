@@ -1,11 +1,11 @@
 package lexwomy.fletching.effect;
 
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 
-public class FocusEffect extends StatusEffect {
+public class FocusEffect extends MobEffect {
     public FocusEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0xADD8E6);
+        super(MobEffectCategory.BENEFICIAL, 0xADD8E6);
     }
 
     //TODO Make custom particle effect

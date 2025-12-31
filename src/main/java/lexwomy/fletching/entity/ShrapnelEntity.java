@@ -1,103 +1,107 @@
 package lexwomy.fletching.entity;
 
-import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import lexwomy.fletching.Fletching;
+import lexwomy.fletching.enchantment.FletchingEnchantmentHelper;
 import lexwomy.fletching.entity.damage.FletchingDamageTypes;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ProjectileDeflection;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public class ShrapnelEntity extends PersistentProjectileEntity {
+public class ShrapnelEntity extends AbstractArrow {
     // The shrapnel entity inherits properties from the original projectile stack
-    public ShrapnelEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
+    private ItemStack parentArrow = null;
+    private int shrapnelCount = 5;
+    private float shrapnelDamage = 0.5F;
+
+    public ShrapnelEntity(EntityType<? extends AbstractArrow> entityType, Level world) {
         super(entityType, world);
+        this.pickup = Pickup.DISALLOWED;
     }
 
-    public ShrapnelEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack shotFrom) {
+    public ShrapnelEntity(Level world, double x, double y, double z, ItemStack stack, @Nullable ItemStack shotFrom) {
         super(FletchingEntities.SHRAPNEL, x, y, z, world, stack, shotFrom);
+        this.parentArrow = stack.copy();
+        this.pickup = Pickup.DISALLOWED;
     }
 
-    public ShrapnelEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
+    public ShrapnelEntity(Level world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
         super(FletchingEntities.SHRAPNEL, owner, world, stack, shotFrom);
+        this.parentArrow = stack.copy();
+        this.pickup = Pickup.DISALLOWED;
     }
 
-    // Assume the shrapnel inherits the traits of a normal arrow
-    @Override
-    protected ItemStack getDefaultItemStack() {
-        return new ItemStack(Items.ARROW);
+    public void setOwner(@Nullable Entity entity) {
+        super.setOwner(entity);
+        this.pickup = Pickup.DISALLOWED;
+    }
+
+    public void setShrapnelCount(int shrapnelCount) {
+        this.shrapnelCount = shrapnelCount;
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
+    protected ItemStack getDefaultPickupItem() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity target = entityHitResult.getEntity();
-        float f = (float)this.getVelocity().length();
-        double d = 1.5F;
+        float f = (float)this.getDeltaMovement().length();
+
+        double d = this.shrapnelDamage;
         Entity owner = this.getOwner();
-        DamageSource damageSource = new DamageSource(
-                this.getWorld().getRegistryManager()
-                        .getOrThrow(RegistryKeys.DAMAGE_TYPE)
-                        .getEntry(FletchingDamageTypes.SHRAPNEL.getValue())
-                        .get(),
-                this, owner != null ? owner : this);
-        if (this.getWeaponStack() != null && this.getWorld() instanceof ServerWorld serverWorld) {
-            d = EnchantmentHelper.getDamage(serverWorld, this.getWeaponStack(), target, damageSource, (float)d);
+        DamageSource damageSource = this.damageSources().source(FletchingDamageTypes.SHRAPNEL, this, owner != null ? owner : this);
+        if (this.getWeaponItem() != null && this.level() instanceof ServerLevel serverLevel) {
+            // Enchantments are applied at 1/(n - 1)th effectiveness
+            d = EnchantmentHelper.modifyDamage(serverLevel, this.getWeaponItem(), target, damageSource, (float)d) / (this.shrapnelCount - 1 == 0 ? 1 : this.shrapnelCount - 1);
         }
+        Fletching.devLogger("Base damage after enchantments: {}", d);
 
-        int i = MathHelper.ceil(MathHelper.clamp(f * d, 0.0, 2.147483647E9));
-
-        if (this.isCritical()) {
-            long l = this.random.nextInt(i / 2 + 2);
-            i = (int)Math.min(l + i, 2147483647L);
-        }
+        int i = Mth.ceil(Mth.clamp(f * d, 0.0, 2.147483647E9));
 
         if (owner instanceof LivingEntity livingEntity) {
-            livingEntity.onAttacking(target);
+            livingEntity.setLastHurtMob(target);
         }
 
         boolean bl = target.getType() == EntityType.ENDERMAN;
-        int j = target.getFireTicks();
+        int j = target.getRemainingFireTicks();
         if (this.isOnFire() && !bl) {
-            target.setOnFireFor(5.0F);
+            target.igniteForSeconds(5.0F);
         }
 
-        if (target.sidedDamage(damageSource, i)) {
+        if (target.hurtOrSimulate(damageSource, i)) {
             if (bl) {
                 return;
             }
 
             if (target instanceof LivingEntity targetAsLivingEntity) {
-                this.knockback(targetAsLivingEntity, damageSource);
-                if (this.getWorld() instanceof ServerWorld serverWorld2) {
-                    EnchantmentHelper.onTargetDamaged(serverWorld2, targetAsLivingEntity, damageSource, this.getWeaponStack());
+                this.doKnockback(targetAsLivingEntity, damageSource);
+                if (this.level() instanceof ServerLevel serverWorld2) {
+                    EnchantmentHelper.doPostAttackEffectsWithItemSource(serverWorld2, targetAsLivingEntity, damageSource, this.getWeaponItem());
                 }
 
-                this.onHit(targetAsLivingEntity);
-                if (targetAsLivingEntity instanceof PlayerEntity
-                        && owner instanceof ServerPlayerEntity serverPlayerEntity
+                this.doPostHurtEffects(targetAsLivingEntity);
+                if (targetAsLivingEntity instanceof Player
+                        && owner instanceof ServerPlayer serverPlayerEntity
                         && !this.isSilent()
                         && targetAsLivingEntity != serverPlayerEntity) {
-                    serverPlayerEntity.networkHandler
-                            .sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.PROJECTILE_HIT_PLAYER, GameStateChangeS2CPacket.DEMO_OPEN_SCREEN));
+                    serverPlayerEntity.connection
+                            .send(new ClientboundGameEventPacket(ClientboundGameEventPacket.PLAY_ARROW_HIT_SOUND, ClientboundGameEventPacket.DEMO_PARAM_INTRO));
                 }
 
                 // TODO - replace with killed by shrapnel criteria
@@ -110,15 +114,15 @@ public class ShrapnelEntity extends PersistentProjectileEntity {
 //                }
             }
 
-            this.playSound(this.getSound(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+            this.playSound(this.getHitGroundSoundEvent(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
             this.discard();
         } else {
-            target.setFireTicks(j);
-            this.deflect(ProjectileDeflection.SIMPLE, target, this.getOwner(), false);
-            this.setVelocity(this.getVelocity().multiply(0.2));
-            if (this.getWorld() instanceof ServerWorld serverWorld3 && this.getVelocity().lengthSquared() < 1.0E-7) {
-                if (this.pickupType == PersistentProjectileEntity.PickupPermission.ALLOWED) {
-                    this.dropStack(serverWorld3, this.asItemStack(), 0.1F);
+            target.setRemainingFireTicks(j);
+            this.deflect(ProjectileDeflection.REVERSE, target, this.owner, false);
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.2));
+            if (this.level() instanceof ServerLevel serverWorld3 && this.getDeltaMovement().lengthSqr() < 1.0E-7) {
+                if (this.pickup == AbstractArrow.Pickup.ALLOWED) {
+                    this.spawnAtLocation(serverWorld3, this.getPickupItem(), 0.1F);
                 }
 
                 this.discard();

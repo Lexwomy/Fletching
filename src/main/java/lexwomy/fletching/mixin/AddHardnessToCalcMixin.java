@@ -2,24 +2,24 @@ package lexwomy.fletching.mixin;
 
 import lexwomy.fletching.Fletching;
 import lexwomy.fletching.component.FletchingComponents;
-import net.minecraft.entity.DamageUtil;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(DamageUtil.class)
+@Mixin(CombatRules.class)
 public abstract class AddHardnessToCalcMixin {
-    @ModifyVariable(method = "getDamageLeft", at = @At(value = "STORE"), ordinal = 5)
+    @ModifyVariable(method = "getDamageAfterAbsorb", at = @At(value = "STORE"), ordinal = 5)
     private static float addHardnessCalculation(float result, LivingEntity armorWearer, float damageAmount, DamageSource damageSource, float armor, float armorToughness) {
         //Result should just be i
-        if (damageSource.getSource() instanceof ArrowEntity) {
-            ItemStack stack = ((ArrowEntity) (damageSource.getSource())).getItemStack();
+        if (damageSource.getDirectEntity() instanceof Arrow) {
+            ItemStack stack = ((Arrow) (damageSource.getDirectEntity())).getPickupItemStackOrigin();
 
-            if (stack.contains(FletchingComponents.HARDNESS)) {
+            if (stack.has(FletchingComponents.HARDNESS)) {
                 int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
                 float penetration = hardness * 0.1F;
                 //1 - (i - 0.1h)

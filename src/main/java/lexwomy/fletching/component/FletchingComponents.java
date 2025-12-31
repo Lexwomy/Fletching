@@ -2,25 +2,25 @@ package lexwomy.fletching.component;
 
 import com.mojang.serialization.Codec;
 import lexwomy.fletching.Fletching;
-import net.minecraft.component.ComponentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 
 public class FletchingComponents {
     public static void initialize() {
         Fletching.LOGGER.info("Component class initialized!");
     }
 
-    public static final ComponentType<Integer> HARDNESS = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Fletching.MOD_ID, "hardness"),
-            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    public static final DataComponentType<Integer> HARDNESS = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "hardness"),
+            DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
 
-    public static final ComponentType<Integer> PIERCING = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Fletching.MOD_ID, "piercing"),
-            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    public static final DataComponentType<Integer> PIERCING = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "piercing"),
+            DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
 }

@@ -14,37 +14,39 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.render.item.property.numeric.NumericProperties;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 
 public class FletchingClient implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
-			if (stack.isIn(ItemTags.ARROWS) || stack.isIn(FletchingItemTags.PILUMS)) {
-				int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
-				int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 0);
-				lines.add(Text.translatable("item.fletching.hardness.info1").formatted(Formatting.DARK_PURPLE));
-				lines.add(Text.translatable("item.fletching.hardness.info2", hardness).formatted(Formatting.BLUE));
-				if (piercing > 0) {
-					lines.add(Text.translatable("item.fletching.piercing.info", piercing).formatted(Formatting.BLUE));
-				}
-			}
-		});
+    @Override
+    public void onInitializeClient() {
+        // This entrypoint is suitable for setting up client-specific logic, such as rendering.
+        ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
+            if (stack.is(ItemTags.ARROWS) || stack.is(FletchingItemTags.PILUMS)) {
+                int hardness = stack.getOrDefault(FletchingComponents.HARDNESS, 0);
+                int piercing = stack.getOrDefault(FletchingComponents.PIERCING, 0);
+                lines.add(Component.translatable("item.fletching.hardness.info1").withStyle(ChatFormatting.DARK_PURPLE));
+                lines.add(Component.translatable("item.fletching.hardness.info2", hardness).withStyle(ChatFormatting.DARK_BLUE));
+                if (piercing > 0) {
+                    lines.add(Component.translatable("item.fletching.piercing.info", piercing).withStyle(ChatFormatting.BLUE));
+                }
+            }
+        });
 
-		ClientLifecycleEvents.CLIENT_STARTED.register((minecraftClient) -> {
-			NumericProperties.ID_MAPPER.put(Identifier.of(Fletching.MOD_ID, "use_percent"), UsePercentProperty.CODEC);
-			Fletching.LOGGER.info("Registered UsePercent property!");
-		});
+        ClientLifecycleEvents.CLIENT_STARTED.register((minecraftClient) -> {
+            RangeSelectItemModelProperties.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "use_percent"), UsePercentProperty.CODEC);
+            Fletching.LOGGER.info("Registered UsePercent property!");
+        });
 
-		EntityRendererRegistry.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
-		EntityRendererRegistry.register(FletchingEntities.SHRAPNEL, ShrapnelEntityRenderer::new);
-		//registerModelPredicateProviders();
-	}
+        EntityRenderers.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
+        EntityRenderers.register(FletchingEntities.SHRAPNEL, ShrapnelEntityRenderer::new);
+
+        //registerModelPredicateProviders();
+    }
 
 //	public static void registerModelPredicateProviders() {
 //		ModelPredicateProviderRegistry.register(FletchingItems.LONGBOW, Identifier.ofVanilla("pull"), (itemStack, clientWorld, livingEntity, seed) -> {

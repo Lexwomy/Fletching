@@ -1,13 +1,12 @@
 package lexwomy.fletching.renderer;
 
 import lexwomy.fletching.entity.ShrapnelEntity;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.ProjectileEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.Identifier;
 
-public class ShrapnelEntityRenderer extends ProjectileEntityRenderer<ShrapnelEntity, ShrapnelEntityRenderState> {
-
-    public ShrapnelEntityRenderer(EntityRendererFactory.Context context) {
+public class ShrapnelEntityRenderer extends EntityRenderer<ShrapnelEntity, ShrapnelEntityRenderState> {
+    public ShrapnelEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -17,8 +16,7 @@ public class ShrapnelEntityRenderer extends ProjectileEntityRenderer<ShrapnelEnt
     }
 
     //TODO - create custom pilum model later
-    @Override
-    protected Identifier getTexture(ShrapnelEntityRenderState state) {
-        return Identifier.ofVanilla("textures/entity/projectiles/arrow.png");
+    protected Identifier getTextureLocation(ShrapnelEntityRenderState state) {
+        return Identifier.withDefaultNamespace("textures/entity/projectiles/arrow.png");
     }
 }

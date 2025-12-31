@@ -4,48 +4,46 @@ import lexwomy.fletching.Fletching;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentHelper;
 import lexwomy.fletching.entity.ShrapnelEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.consume.UseAction;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ShortbowItem extends RangedWeaponItem {
+public class ShortbowItem extends ProjectileWeaponItem {
     //Used as the base draw time of the bow, which can be affected by frenzy
     public static final float DRAW_TIME = 15.0F;
     public static final float BASE_VELOCITY = 1.75F;
+    public static final float SHRAPNEL_VELOCITY_INCREASE = 0.25F;
     public static final int RANGE = 10;
-    public static final int SHRAPNEL_COUNT = 5;
-    private static final Random RANDOM = Random.create();
 
-    public ShortbowItem(net.minecraft.item.Item.Settings settings) {
+    public ShortbowItem(net.minecraft.world.item.Item.Properties settings) {
         super(settings);
     }
 
     @Override
-    public Predicate<ItemStack> getProjectiles() {
-        return BOW_PROJECTILES;
+    public Predicate<ItemStack> getAllSupportedProjectiles() {
+        return ARROW_ONLY;
     }
 
     public float getFrenzyDrawTime(LivingEntity user, ItemStack itemStack) {
-        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FRENZY);
+        MobEffectInstance effect = user.getEffect(FletchingEffects.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
         if (frenzy_stack > 40) {
             frenzy_stack = 40;
@@ -53,30 +51,28 @@ public class ShortbowItem extends RangedWeaponItem {
 
         float draw_time = FletchingEnchantmentHelper.modifyDrawTime(user, itemStack, DRAW_TIME);
         draw_time -= 0.25F * frenzy_stack;
-        Fletching.LOGGER.info("Frenzy {} yielding new draw time {}, rounded to {}", frenzy_stack, draw_time, Math.round(draw_time));
         return Math.round(draw_time);
     }
 
     public float getFrenzyInaccuracy(LivingEntity user) {
-        StatusEffectInstance effect = user.getStatusEffect(FletchingEffects.FRENZY);
+        MobEffectInstance effect = user.getEffect(FletchingEffects.FRENZY);
         int frenzy_stack = effect == null ? 0 : effect.getAmplifier() + 1;
         if (frenzy_stack > 40) {
             frenzy_stack = 40;
         }
-        Fletching.LOGGER.info("Frenzy {} yielding inaccuracy {}", frenzy_stack, 0.125F * frenzy_stack);
         return 0.25F * frenzy_stack;
     }
 
     @Override
-    public int getRange() {
+    public int getDefaultProjectileRange() {
         return RANGE;
     }
 
     @Override
-    protected void shootAll(
-            ServerWorld world,
+    protected void shoot(
+            ServerLevel world,
             LivingEntity shooter,
-            Hand hand,
+            InteractionHand hand,
             ItemStack stack,
             List<ItemStack> projectiles,
             float speed,
@@ -86,26 +82,25 @@ public class ShortbowItem extends RangedWeaponItem {
     ) {
 
         float radius = FletchingEnchantmentHelper.modifyInaccuracy(shooter, stack, 0) + getFrenzyInaccuracy(shooter);
-        boolean isScattershot = FletchingEnchantmentHelper.hasEnchantment(stack, Text.translatable("enchantment.fletching.scattershot"));
-        // To counteract forced multishot, scattershot will inherit only the first projectile
-        if (isScattershot && !projectiles.isEmpty()) {
-            ItemStack itemStack = projectiles.getFirst();
-            for (int i = 0; i < SHRAPNEL_COUNT; i++) {
-                ProjectileEntity shrapnelEntity = createShrapnelEntity(world, shooter, stack, itemStack, critical);
-                this.shoot(shooter, shrapnelEntity, i, speed, divergence, radius, target);
-                world.spawnEntity(shrapnelEntity);
-            }
-            // Scattershot will consume twice the durability per shot
-            stack.damage(this.getWeaponStackDamage(itemStack) * 2, shooter, LivingEntity.getSlotForHand(hand));
-        } else {
-            for (int j = 0; j < projectiles.size(); j++) {
-                ItemStack itemStack = projectiles.get(j);
-                if (!itemStack.isEmpty()) {
+        int shrapnelCount = FletchingEnchantmentHelper.getShrapnelCount(shooter, stack);
 
-                    ProjectileEntity projectileEntity = this.createArrowEntity(world, shooter, stack, itemStack, critical);
-                    this.shoot(shooter, projectileEntity, j, speed, divergence, radius, target);
-                    world.spawnEntity(projectileEntity);
-                    stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
+        // Scattershot can get multiplied by any enchantment that provides multiple projectiles
+        for (int j = 0; j < projectiles.size(); j++) {
+            ItemStack itemStack = projectiles.get(j);
+            if (!itemStack.isEmpty()) {
+                if (shrapnelCount > 0) {
+                    for (int i = 0; i < shrapnelCount; i++) {
+                        Projectile shrapnelEntity = createShrapnelEntity(world, shooter, stack, itemStack, shrapnelCount);
+                        this.shootProjectile(shooter, shrapnelEntity, i, speed, divergence, radius, target);
+                        world.addFreshEntity(shrapnelEntity);
+                    }
+                    // Scattershot will consume twice the durability per shot
+                    stack.hurtAndBreak(this.getDurabilityUse(itemStack) * 2, shooter, hand.asEquipmentSlot());
+                } else {
+                    Projectile projectileEntity = this.createProjectile(world, shooter, stack, itemStack, critical);
+                    this.shootProjectile(shooter, projectileEntity, j, speed, divergence, radius, target);
+                    world.addFreshEntity(projectileEntity);
+                    stack.hurtAndBreak(this.getDurabilityUse(itemStack), shooter, hand.asEquipmentSlot());
                     if (stack.isEmpty()) {
                         break;
                     }
@@ -114,32 +109,32 @@ public class ShortbowItem extends RangedWeaponItem {
         }
     }
 
-    protected ProjectileEntity createShrapnelEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        PersistentProjectileEntity shrapnelEntity = new ShrapnelEntity(world, shooter, projectileStack, weaponStack);
-        shrapnelEntity.setCritical(critical);
+    protected Projectile createShrapnelEntity(Level world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, int shrapnelCount) {
+        ShrapnelEntity shrapnelEntity = new ShrapnelEntity(world, shooter, projectileStack, weaponStack);
+        shrapnelEntity.setShrapnelCount(shrapnelCount);
+        shrapnelEntity.setCritArrow(false);
         return shrapnelEntity;
     }
 
     // Returns [yaw, pitch]
-    private float[] getSpread(float radius) {
-        float angle = RANDOM.nextFloat() * 2 * MathHelper.PI;
-        float spread = RANDOM.nextFloat() * radius;
+    private float[] getSpread(LivingEntity user, float radius) {
+        float angle = user.getRandom().nextFloat() * 2 * Mth.PI;
+        float spread = user.getRandom().nextFloat() * radius;
 
-        return new float[] { MathHelper.cos(angle) * spread, MathHelper.sin(angle) * spread };
+        return new float[] { Mth.cos(angle) * spread, Mth.sin(angle) * spread };
     }
 
     //Check for frenzy and add a random value to yaw to simulate inaccurate "frenzied" shooting
     //Spread should only exist on scattershot, and in the case of frenzy, will increase the spread of scattershot instead
     @Override
-    protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float radius, @Nullable LivingEntity target) {
-        float[] spread = getSpread(radius);
-        projectile.setVelocity(shooter, shooter.getPitch() + spread[1],
-                shooter.getYaw() + spread[0], 0.0F, speed, divergence);
+    protected void shootProjectile(@NotNull LivingEntity shooter, Projectile projectile, int index, float speed, float divergence, float radius, @Nullable LivingEntity target) {
+        float[] spread = getSpread(shooter, radius);
+        projectile.shootFromRotation(shooter, shooter.getXRot() + spread[1],
+                shooter.getYRot() + spread[0], 0.0F, speed, divergence);
     }
 
     public float getPullProgress(int useTicks, LivingEntity user, ItemStack itemStack) {
         float base = this.getFrenzyDrawTime(user, itemStack);
-        //Fletching.LOGGER.info("Draw time is now: {}", base);
         float f = (float)useTicks / base;
         f = (f * f + f * 2.0F) / 3.0F;
         if (f > 1.0F) {
@@ -150,17 +145,22 @@ public class ShortbowItem extends RangedWeaponItem {
     }
 
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (user instanceof PlayerEntity playerEntity) {
-            ItemStack itemStack = playerEntity.getProjectileType(stack);
+    public boolean releaseUsing(@NotNull ItemStack stack, @NotNull Level world, @NotNull LivingEntity user, int remainingUseTicks) {
+        if (user instanceof Player playerEntity) {
+            ItemStack itemStack = playerEntity.getProjectile(stack);
             if (!itemStack.isEmpty()) {
-                int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
+                int i = this.getUseDuration(stack, user) - remainingUseTicks;
                 float f = this.getPullProgress(i, user, stack);
-                if (!((double)f < 0.1)) {
-                    List<ItemStack> list = load(stack, itemStack, playerEntity);
-                    if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
-                         this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list,
-                                f * BASE_VELOCITY, 1.0F, f == 1.0F, null);
+                int shrapnelCount = FletchingEnchantmentHelper.getShrapnelCount(user, stack);
+                boolean canShoot = (shrapnelCount > 0 && f >= 0.9) || (shrapnelCount == 0 && f >= 0.5);
+                Fletching.devLogger("Can shoot shortbow: {}", canShoot);
+                if (canShoot) {
+                    List<ItemStack> list = draw(stack, itemStack, playerEntity);
+                    if (world instanceof ServerLevel serverWorld && !list.isEmpty()) {
+                        // Scattershot cannot crit
+                        float speed = shrapnelCount == 0 ? BASE_VELOCITY : BASE_VELOCITY + SHRAPNEL_VELOCITY_INCREASE;
+                         this.shoot(serverWorld, playerEntity, playerEntity.getUsedItemHand(), stack, list,
+                                f * speed, 1.0F, f == 1.0F && shrapnelCount == 0, null);
                     }
 
                     world.playSound(
@@ -168,12 +168,12 @@ public class ShortbowItem extends RangedWeaponItem {
                             playerEntity.getX(),
                             playerEntity.getY(),
                             playerEntity.getZ(),
-                            SoundEvents.ENTITY_ARROW_SHOOT,
-                            SoundCategory.PLAYERS,
+                            SoundEvents.ARROW_SHOOT,
+                            SoundSource.PLAYERS,
                             1.0F,
                             1.3F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F
                     );
-                    playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
+                    playerEntity.awardStat(Stats.ITEM_USED.get(this));
                 }
             }
         }
@@ -181,24 +181,24 @@ public class ShortbowItem extends RangedWeaponItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
         return 72000;
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BOW;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.BOW;
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        boolean bl = !user.getProjectileType(itemStack).isEmpty();
-        if (!user.isInCreativeMode() && !bl) {
-            return ActionResult.FAIL;
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        boolean bl = !user.getProjectile(itemStack).isEmpty();
+        if (!user.hasInfiniteMaterials() && !bl) {
+            return InteractionResult.FAIL;
         } else {
-            user.setCurrentHand(hand);
-            return ActionResult.CONSUME;
+            user.startUsingItem(hand);
+            return InteractionResult.CONSUME;
         }
     }
 }

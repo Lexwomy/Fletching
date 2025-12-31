@@ -2,37 +2,37 @@ package lexwomy.fletching.entity;
 
 import lexwomy.fletching.Fletching;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 
 public class FletchingEntities {
-    public static final RegistryKey<EntityType<?>> PILUM_KEY = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Fletching.MOD_ID, "pilum"));
-    public static final RegistryKey<EntityType<?>> SHRAPNEL_KEY = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Fletching.MOD_ID, "shrapnel"));
+    public static final ResourceKey<EntityType<?>> PILUM_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "pilum"));
+    public static final ResourceKey<EntityType<?>> SHRAPNEL_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "shrapnel"));
     public static final EntityType<PilumEntity> PILUM = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             PILUM_KEY,
-            EntityType.Builder.<PilumEntity>create(PilumEntity::new, SpawnGroup.MISC)
-                    .dropsNothing()
-                    .dimensions(1.0F, 0.5F)
+            EntityType.Builder.<PilumEntity>of(PilumEntity::new, MobCategory.MISC)
+                    .noLootTable()
+                    .sized(1.0F, 0.5F)
                     .eyeHeight(0.13F)
-                    .maxTrackingRange(4)
-                    .trackingTickInterval(20)
+                    .clientTrackingRange(4)
+                    .updateInterval(20)
                     .build(PILUM_KEY)
     );
     public static final EntityType<ShrapnelEntity> SHRAPNEL = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             SHRAPNEL_KEY,
-            EntityType.Builder.<ShrapnelEntity>create(ShrapnelEntity::new, SpawnGroup.MISC)
-                    .dropsNothing()
-                    .dimensions(0.15F, 0.15F)
+            EntityType.Builder.<ShrapnelEntity>of(ShrapnelEntity::new, MobCategory.MISC)
+                    .noLootTable()
+                    .sized(0.15F, 0.15F)
                     .eyeHeight(0.13F)
-                    .maxTrackingRange(4)
-                    .trackingTickInterval(20)
+                    .clientTrackingRange(4)
+                    .updateInterval(20)
                     .build(SHRAPNEL_KEY)
     );
 

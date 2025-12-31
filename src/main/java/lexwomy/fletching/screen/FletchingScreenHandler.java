@@ -1,34 +1,34 @@
 package lexwomy.fletching.screen;
 
 import lexwomy.fletching.Fletching;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
 
 //TO-DO Make a UI once types of arrows/bows fleshed out
-public class FletchingScreenHandler extends ScreenHandler {
-    private final ScreenHandlerContext context;
+public class FletchingScreenHandler extends AbstractContainerMenu {
+    private final ContainerLevelAccess context;
 
     //Client constructor
-    public FletchingScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
+    public FletchingScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, ContainerLevelAccess.NULL);
     }
 
     //Server constructor
-    public FletchingScreenHandler(int syncId, PlayerInventory inventory, final ScreenHandlerContext context) {
+    public FletchingScreenHandler(int syncId, Inventory inventory, final ContainerLevelAccess context) {
         super(Fletching.FLETCHING, syncId);
         this.context = context;
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack quickMoveStack(Player player, int slot) {
         return null;
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return false;
     }
 }

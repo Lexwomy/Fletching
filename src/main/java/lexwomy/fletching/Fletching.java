@@ -12,11 +12,12 @@ import lexwomy.fletching.tags.FletchingTags;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +28,18 @@ public class Fletching implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("fletching");
 	public static final String MOD_ID = "fletching";
 
-	public static final ScreenHandlerType<FletchingScreenHandler> FLETCHING = new ScreenHandlerType<>(FletchingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static final MenuType<FletchingScreenHandler> FLETCHING = new MenuType<>(FletchingScreenHandler::new, FeatureFlags.VANILLA_SET);
+
+    public static void devLogger(String loggerInput, Object... loggerObjects) {
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            LOGGER.debug(loggerInput, loggerObjects);
+        }
+    }
 
 	@Override
 	public void onInitialize() {
 		//Registers the fletching screen handler to the minecraft registries
-		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "fletching"), FLETCHING);
+		Registry.register(BuiltInRegistries.MENU, Identifier.fromNamespaceAndPath(MOD_ID, "fletching"), FLETCHING);
 
 		FletchingComponents.initialize();
 		FletchingItems.initialize();
