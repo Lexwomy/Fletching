@@ -29,8 +29,8 @@ public class FletchingEntities {
             SHRAPNEL_KEY,
             EntityType.Builder.<ShrapnelEntity>of(ShrapnelEntity::new, MobCategory.MISC)
                     .noLootTable()
-                    .sized(0.15F, 0.15F)
-                    .eyeHeight(0.13F)
+                    .sized(0.1F, 0.1F)
+                    .eyeHeight(0.05F)
                     .clientTrackingRange(4)
                     .updateInterval(20)
                     .build(SHRAPNEL_KEY)

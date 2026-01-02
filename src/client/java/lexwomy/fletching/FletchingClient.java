@@ -6,6 +6,7 @@ import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.item.GreatbowItem;
 import lexwomy.fletching.item.LongbowItem;
 import lexwomy.fletching.item.ShortbowItem;
+import lexwomy.fletching.models.ShrapnelModel;
 import lexwomy.fletching.render.item.property.numeric.UsePercentProperty;
 import lexwomy.fletching.renderer.PilumEntityRenderer;
 import lexwomy.fletching.renderer.ShrapnelEntityRenderer;
@@ -13,15 +14,20 @@ import lexwomy.fletching.tags.FletchingItemTags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FletchingClient implements ClientModInitializer {
+    public static final Map<ModelLayerLocation, LayerDefinition> MODELS = new HashMap<>();
     @Override
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -44,7 +50,7 @@ public class FletchingClient implements ClientModInitializer {
 
         EntityRenderers.register(FletchingEntities.PILUM, PilumEntityRenderer::new);
         EntityRenderers.register(FletchingEntities.SHRAPNEL, ShrapnelEntityRenderer::new);
-
+        MODELS.put(ShrapnelModel.LAYER_LOCATION, ShrapnelModel.createBodyLayer());
         //registerModelPredicateProviders();
     }
 
