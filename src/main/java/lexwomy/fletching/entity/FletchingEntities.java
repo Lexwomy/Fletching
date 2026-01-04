@@ -11,8 +11,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
 public class FletchingEntities {
-    public static final ResourceKey<EntityType<?>> PILUM_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "pilum"));
-    public static final ResourceKey<EntityType<?>> SHRAPNEL_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Fletching.MOD_ID, "shrapnel"));
+    public static final ResourceKey<EntityType<?>> PILUM_KEY = Fletching.createResourceKey(Registries.ENTITY_TYPE,"pilum");
+    public static final ResourceKey<EntityType<?>> SHRAPNEL_KEY = Fletching.createResourceKey(Registries.ENTITY_TYPE, "shrapnel");
     public static final EntityType<PilumEntity> PILUM = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             PILUM_KEY,

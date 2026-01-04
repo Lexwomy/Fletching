@@ -11,23 +11,23 @@
           "type": "minecraft:apply_mob_effect",
           "max_amplifier": {
             "type": "minecraft:linear",
-            "base": 0,
+            "base": 0.0,
             "per_level_above_first": 1.0
           },
           "max_duration": {
             "type": "minecraft:linear",
-            "base": 6,
-            "per_level_above_first": -1
+            "base": 6.0,
+            "per_level_above_first": -1.0
           },
           "min_amplifier": {
             "type": "minecraft:linear",
-            "base": 0,
+            "base": 0.0,
             "per_level_above_first": 1.0
           },
           "min_duration": {
             "type": "minecraft:linear",
-            "base": 6,
-            "per_level_above_first": -1
+            "base": 6.0,
+            "per_level_above_first": -1.0
           },
           "to_apply": "fletching:frenzy"
         },
@@ -54,7 +54,7 @@
       }
     ]
   },
-  "exclusive_set": "minecraft:infinity",
+  "exclusive_set": "#fletching:exclusive/frenzy",
   "max_cost": {
     "base": 25,
     "per_level_above_first": 8
@@ -67,6 +67,6 @@
   "slots": [
     "mainhand"
   ],
-  "supported_items": "fletching:shortbow",
+  "supported_items": "#fletching:enchantable/shortbow",
   "weight": 3
 }

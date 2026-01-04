@@ -6,30 +6,18 @@
   "effects": {
     "fletching:draw_time": {
       "type": "minecraft:add",
-      "value": {
-        "type": "minecraft:linear",
-        "base": 10,
-        "per_level_above_first": 0
-      }
+      "value": 10.0
     },
     "fletching:inaccuracy": {
       "type": "minecraft:add",
-      "value": {
-        "type": "minecraft:linear",
-        "base": 5,
-        "per_level_above_first": 0
-      }
+      "value": 5.0
     },
     "fletching:shrapnel_count": {
       "type": "minecraft:add",
-      "value": {
-        "type": "minecraft:linear",
-        "base": 5,
-        "per_level_above_first": 0
-      }
+      "value": 5.0
     }
   },
-  "exclusive_set": "minecraft:infinity",
+  "exclusive_set": "#fletching:exclusive/scattershot",
   "max_cost": {
     "base": 50,
     "per_level_above_first": 0
@@ -42,6 +30,6 @@
   "slots": [
     "mainhand"
   ],
-  "supported_items": "fletching:shortbow",
-  "weight": 1
+  "supported_items": "#fletching:enchantable/shortbow",
+  "weight": 2
 }

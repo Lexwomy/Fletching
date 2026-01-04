@@ -1,0 +1,7 @@
+// 1.21.11	-999999999-01-01T00:00:00	Fletching/Tags for minecraft:enchantment
+df6cec8412d544e220f60b8aa79ae8293f6e3707 data/fletching/tags/enchantment/exclusive/frenzy.json
+df6cec8412d544e220f60b8aa79ae8293f6e3707 data/fletching/tags/enchantment/exclusive/scattershot.json
+cc639c9674f52e844362321f810398063707793b data/fletching/tags/enchantment/modifies_accuracy.json
+5228e00326b1e5ee42522a5e672fadd508f5a3f8 data/fletching/tags/enchantment/modifies_draw_time.json
+5228e00326b1e5ee42522a5e672fadd508f5a3f8 data/fletching/tags/enchantment/modifies_shrapnel_count.json
+3b4cb9786b22e9272ea8da08e0369647bb5fbe7d data/minecraft/tags/enchantment/non_treasure.json

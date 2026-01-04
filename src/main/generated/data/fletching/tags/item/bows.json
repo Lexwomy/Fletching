@@ -1,8 +1,7 @@
 {
   "values": [
-    "minecraft:bow",
-    "fletching:longbow",
     "fletching:shortbow",
+    "fletching:longbow",
     "fletching:greatbow"
   ]
 }
