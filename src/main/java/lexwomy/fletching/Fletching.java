@@ -4,14 +4,13 @@ import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentEffectComponentTypes;
 import lexwomy.fletching.enchantment.FletchingEnchantments;
+import lexwomy.fletching.enchantment.effects.RemoveMobEffect;
 import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.entity.damage.FletchingDamageTypes;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.screen.FletchingScreenHandler;
 import lexwomy.fletching.tags.FletchingTags;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
-import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,7 +18,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +49,10 @@ public class Fletching implements ModInitializer {
     // Registers the fletching screen handler to the minecraft registries
     Registry.register(
         BuiltInRegistries.MENU, Identifier.fromNamespaceAndPath(MOD_ID, "fletching"), FLETCHING);
+    Registry.register(
+        BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
+        Identifier.fromNamespaceAndPath(MOD_ID, "remove_mob_effect"),
+        RemoveMobEffect.CODEC);
 
     FletchingComponents.initialize();
     FletchingItems.initialize();
@@ -63,41 +65,6 @@ public class Fletching implements ModInitializer {
     // This code runs as soon as Minecraft is in a mod-load-ready state.
     // However, some things (like resources) may still be uninitialized.
     // Proceed with mild caution.
-    EnchantmentEvents.ALLOW_ENCHANTING.register(
-        (enchantment, target, enchantingContext) -> {
-          if (target.is(FletchingItems.LONGBOW) && enchantment.is(Enchantments.PIERCING)) {
-            return TriState.TRUE;
-          }
-          return TriState.DEFAULT;
-        });
-
-//    EnchantmentEvents.MODIFY.register(
-//        (key, builder, source) -> {
-//          if (Enchantments.PIERCING.equals(key)) {
-//            Enchantment.EnchantmentDefinition definition =
-//                ((EnchantmentBuilderAccessor) builder).getDefinition();
-//            TagKey<Item> tagKey = definition.supportedItems().unwrapKey().orElseThrow();
-//            HolderSet.Named<Item> supportedItemsHolderSet =
-//                BuiltInRegistries.ITEM.get(tagKey).orElseThrow();
-//
-//            List<Holder<Item>> supportedItems =
-//                Stream.concat(
-//                        definition.supportedItems().stream(),
-//                        Stream.of(Holder.direct(FletchingItems.LONGBOW)))
-//                    .toList();
-//            ((SetEnchantmentDefinitionAccessor) builder)
-//                .setDefinition(
-//                    new Enchantment.EnchantmentDefinition(
-//                        HolderSet.direct(supportedItems),
-//                        definition.primaryItems(),
-//                        definition.weight(),
-//                        definition.maxLevel(),
-//                        definition.minCost(),
-//                        definition.maxCost(),
-//                        definition.anvilCost(),
-//                        definition.slots()));
-//          }
-//        });
 
     LOGGER.info("Hello Fabric world!");
   }

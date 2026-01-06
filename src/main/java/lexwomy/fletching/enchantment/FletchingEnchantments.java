@@ -2,9 +2,13 @@ package lexwomy.fletching.enchantment;
 
 import lexwomy.fletching.Fletching;
 import lexwomy.fletching.effect.FletchingEffects;
+import lexwomy.fletching.enchantment.effects.RemoveMobEffect;
 import lexwomy.fletching.entity.FletchingEntities;
+import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.tags.FletchingEnchantmentTags;
 import lexwomy.fletching.tags.FletchingItemTags;
+import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.EntityTypePredicate;
 import net.minecraft.core.HolderGetter;
@@ -28,6 +32,8 @@ public class FletchingEnchantments {
       Fletching.createResourceKey(Registries.ENCHANTMENT, "scattershot");
   public static final ResourceKey<Enchantment> FRENZY_KEY =
       Fletching.createResourceKey(Registries.ENCHANTMENT, "frenzy");
+  public static final ResourceKey<Enchantment> FOCUS_KEY =
+      Fletching.createResourceKey(Registries.ENCHANTMENT, "focus");
 
   public static void bootstrap(BootstrapContext<Enchantment> bootstrapContext) {
     HolderGetter<Item> itemGetter = bootstrapContext.lookup(Registries.ITEM);
@@ -93,6 +99,38 @@ public class FletchingEnchantments {
                             .entityType(
                                 EntityTypePredicate.of(
                                     entityTypeGetter, FletchingEntities.SHRAPNEL))))));
+
+    register(
+        bootstrapContext,
+        FOCUS_KEY,
+        Enchantment.enchantment(
+                Enchantment.definition(
+                    itemGetter.getOrThrow(FletchingItemTags.LONGBOW_ENCHANTABLE),
+                    2,
+                    1,
+                    Enchantment.constantCost(20),
+                    Enchantment.constantCost(30),
+                    2,
+                    EquipmentSlotGroup.MAINHAND))
+            .exclusiveWith(enchantmentGetter.getOrThrow(FletchingEnchantmentTags.FOCUS_EXCLUSIVE))
+            .withEffect(
+                EnchantmentEffectComponents.POST_ATTACK,
+                EnchantmentTarget.ATTACKER,
+                EnchantmentTarget.ATTACKER,
+                new ApplyMobEffect(
+                    HolderSet.direct(FletchingEffects.FOCUS),
+                    LevelBasedValue.constant(30),
+                    LevelBasedValue.constant(30),
+                    LevelBasedValue.constant(0),
+                    LevelBasedValue.constant(0)),
+                LootItemEntityPropertyCondition.hasProperties(
+                    LootContext.EntityTarget.DIRECT_ATTACKER,
+                    EntityPredicate.Builder.entity()
+                        .entityType(
+                            EntityTypePredicate.of(entityTypeGetter, EntityTypeTags.ARROWS))))
+            .withEffect(
+                EnchantmentEffectComponents.HIT_BLOCK,
+                new RemoveMobEffect(HolderSet.direct(FletchingEffects.FOCUS))));
   }
 
   private static void register(
@@ -103,6 +141,13 @@ public class FletchingEnchantments {
   }
 
   public static void initialize() {
+    EnchantmentEvents.ALLOW_ENCHANTING.register(
+        (enchantment, target, enchantingContext) -> {
+          if (target.is(FletchingItems.LONGBOW) && enchantment.is(Enchantments.PIERCING)) {
+            return TriState.TRUE;
+          }
+          return TriState.DEFAULT;
+        });
     Fletching.LOGGER.info("Fletching enchantment keys initialized!");
   }
 }

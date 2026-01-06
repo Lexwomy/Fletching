@@ -68,9 +68,14 @@ public class FletchingDataGenerator implements DataGeneratorEntrypoint {
             new Pair<>("item.fletching.longbow", "Longbow"),
             new Pair<>("item.fletching.greatbow", "Greatbow"),
             new Pair<>("effect.fletching.frenzy", "Frenzy"),
+            new Pair<>("effect.fletching.focus", "Focus"),
             new Pair<>("enchantment.fletching.frenzy", "Frenzy"),
             new Pair<>("enchantment.fletching.scattershot", "Scattershot"),
-            new Pair<>("tag.item.fletching.bows", "Bows"));
+            new Pair<>("enchantment.fletching.focus", "Focus"),
+            new Pair<>("tag.item.fletching.bows", "Bows"),
+            new Pair<>("tag.item.fletching.pilums", "Pilums"),
+            new Pair<>("tag.item.fletching.enchantable.shortbow", "Shortbow Enchantable"),
+            new Pair<>("tag.item.fletching.enchantable.longbow", "Longbow Enchantable"));
 
     private FletchingLanguageProvider(
         FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
@@ -110,8 +115,10 @@ public class FletchingDataGenerator implements DataGeneratorEntrypoint {
         builder(FletchingEnchantmentTags.MODIFIES_DRAW_TIME)
             .add(FletchingEnchantments.SCATTERSHOT_KEY);
         builder(FletchingEnchantmentTags.MODIFIES_ACCURACY).add(FletchingEnchantments.FRENZY_KEY);
+
         builder(FletchingEnchantmentTags.SCATTERSHOT_EXCLUSIVE).add(Enchantments.INFINITY);
         builder(FletchingEnchantmentTags.FRENZY_EXCLUSIVE).add(Enchantments.INFINITY);
+        builder(FletchingEnchantmentTags.FOCUS_EXCLUSIVE).add(Enchantments.PIERCING);
 
         builder(EnchantmentTags.NON_TREASURE).addAll(NON_TREASURE_ENCHANTMENTS).setReplace(false);
       }
@@ -145,6 +152,7 @@ public class FletchingDataGenerator implements DataGeneratorEntrypoint {
             .add(FletchingItems.LONGBOW)
             .add(FletchingItems.GREATBOW);
         valueLookupBuilder(FletchingItemTags.SHORTBOW_ENCHANTABLE).add(FletchingItems.SHORTBOW);
+        valueLookupBuilder(FletchingItemTags.LONGBOW_ENCHANTABLE).add(FletchingItems.LONGBOW);
 
         valueLookupBuilder(ItemTags.ARROWS)
             .add(FletchingItems.IRON_ARROW)

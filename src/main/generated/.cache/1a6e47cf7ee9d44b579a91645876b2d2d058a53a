@@ -1,5 +1,6 @@
 // 1.21.11	-999999999-01-01T00:00:00	Fletching/Tags for minecraft:item
 25fc65964082ac6b804c9ea8b73db943376e7fa7 data/fletching/tags/item/bows.json
+68d356dea55545e4c98ce3052484b69a022ff9f8 data/fletching/tags/item/enchantable/longbow.json
 128490a11697255730ae9108555cb43bd98b0cef data/fletching/tags/item/enchantable/shortbow.json
 2affc74bd446a7d9326b6a07aaf4421b601d6d14 data/minecraft/tags/item/arrows.json
 b91bf63675858006afe6bcb8b65dd5b8a15de594 data/minecraft/tags/item/enchantable/bow.json

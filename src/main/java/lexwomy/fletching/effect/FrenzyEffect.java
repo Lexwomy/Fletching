@@ -1,15 +1,19 @@
 package lexwomy.fletching.effect;
 
-import lexwomy.fletching.Fletching;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 public class FrenzyEffect extends MobEffect {
     public FrenzyEffect() {
         super(MobEffectCategory.BENEFICIAL, 0x9b870c);
     }
 
+    public static int getFrenzyStack(@Nullable MobEffectInstance instance) {
+        return instance == null ? 0 : Math.min(instance.getAmplifier() + 1, 40);
+    }
     //TODO - Make custom particle effect?
     //protected FrenzyEffect(ParticleEffect particleEffect) {}
 
