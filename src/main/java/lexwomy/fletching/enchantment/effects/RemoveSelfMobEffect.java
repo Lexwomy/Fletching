@@ -15,16 +15,17 @@ import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 
-public record RemoveMobEffect(HolderSet<MobEffect> toRemove) implements EnchantmentEntityEffect {
-  public static final MapCodec<RemoveMobEffect> CODEC =
+public record RemoveSelfMobEffect(HolderSet<MobEffect> toRemove)
+    implements EnchantmentEntityEffect {
+  public static final MapCodec<RemoveSelfMobEffect> CODEC =
       RecordCodecBuilder.mapCodec(
           instance ->
               instance
                   .group(
                       RegistryCodecs.homogeneousList(Registries.MOB_EFFECT)
                           .fieldOf("to_remove")
-                          .forGetter(RemoveMobEffect::toRemove))
-                  .apply(instance, RemoveMobEffect::new));
+                          .forGetter(RemoveSelfMobEffect::toRemove))
+                  .apply(instance, RemoveSelfMobEffect::new));
 
   @Override
   public void apply(

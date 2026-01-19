@@ -4,7 +4,6 @@ import lexwomy.fletching.component.FletchingComponents;
 import lexwomy.fletching.effect.FletchingEffects;
 import lexwomy.fletching.enchantment.FletchingEnchantmentEffectComponentTypes;
 import lexwomy.fletching.enchantment.FletchingEnchantments;
-import lexwomy.fletching.enchantment.effects.RemoveMobEffect;
 import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.entity.damage.FletchingDamageTypes;
 import lexwomy.fletching.item.FletchingItems;
@@ -47,12 +46,7 @@ public class Fletching implements ModInitializer {
   @Override
   public void onInitialize() {
     // Registers the fletching screen handler to the minecraft registries
-    Registry.register(
-        BuiltInRegistries.MENU, Identifier.fromNamespaceAndPath(MOD_ID, "fletching"), FLETCHING);
-    Registry.register(
-        BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
-        Identifier.fromNamespaceAndPath(MOD_ID, "remove_mob_effect"),
-        RemoveMobEffect.CODEC);
+    Registry.register(BuiltInRegistries.MENU, identifier("fletching"), FLETCHING);
 
     FletchingComponents.initialize();
     FletchingItems.initialize();

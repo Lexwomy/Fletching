@@ -1,8 +1,12 @@
 package lexwomy.fletching.enchantment;
 
+import java.util.List;
 import lexwomy.fletching.Fletching;
 import lexwomy.fletching.effect.FletchingEffects;
-import lexwomy.fletching.enchantment.effects.RemoveMobEffect;
+import lexwomy.fletching.effect.FocusEffect;
+import lexwomy.fletching.enchantment.effects.ApplyBurstStackingMobEffect;
+import lexwomy.fletching.enchantment.effects.ApplyStackingMobEffect;
+import lexwomy.fletching.enchantment.effects.RemoveSelfMobEffect;
 import lexwomy.fletching.entity.FletchingEntities;
 import lexwomy.fletching.item.FletchingItems;
 import lexwomy.fletching.tags.FletchingEnchantmentTags;
@@ -13,6 +17,8 @@ import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.EntityTypePredicate;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -22,7 +28,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.AddValue;
-import net.minecraft.world.item.enchantment.effects.ApplyMobEffect;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -81,7 +86,7 @@ public class FletchingEnchantments {
                 EnchantmentEffectComponents.POST_ATTACK,
                 EnchantmentTarget.ATTACKER,
                 EnchantmentTarget.ATTACKER,
-                new ApplyMobEffect(
+                new ApplyStackingMobEffect(
                     HolderSet.direct(FletchingEffects.FRENZY),
                     LevelBasedValue.perLevel(6, -1),
                     LevelBasedValue.perLevel(6, -1),
@@ -117,12 +122,14 @@ public class FletchingEnchantments {
                 EnchantmentEffectComponents.POST_ATTACK,
                 EnchantmentTarget.ATTACKER,
                 EnchantmentTarget.ATTACKER,
-                new ApplyMobEffect(
+                new ApplyBurstStackingMobEffect(
                     HolderSet.direct(FletchingEffects.FOCUS),
+                    HolderSet.direct(FletchingEffects.EAGLESIGHT),
                     LevelBasedValue.constant(30),
                     LevelBasedValue.constant(30),
                     LevelBasedValue.constant(0),
-                    LevelBasedValue.constant(0)),
+                    LevelBasedValue.constant(0),
+                    LevelBasedValue.constant(FocusEffect.MAX_FOCUS_AMPLIFIER + 1)),
                 LootItemEntityPropertyCondition.hasProperties(
                     LootContext.EntityTarget.DIRECT_ATTACKER,
                     EntityPredicate.Builder.entity()
@@ -130,7 +137,9 @@ public class FletchingEnchantments {
                             EntityTypePredicate.of(entityTypeGetter, EntityTypeTags.ARROWS))))
             .withEffect(
                 EnchantmentEffectComponents.HIT_BLOCK,
-                new RemoveMobEffect(HolderSet.direct(FletchingEffects.FOCUS))));
+                new RemoveSelfMobEffect(
+                    HolderSet.direct(
+                        List.of(FletchingEffects.FOCUS, FletchingEffects.EAGLESIGHT)))));
   }
 
   private static void register(
@@ -148,6 +157,18 @@ public class FletchingEnchantments {
           }
           return TriState.DEFAULT;
         });
+    Registry.register(
+        BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
+        Fletching.identifier("remove_self_mob_effect"),
+        RemoveSelfMobEffect.CODEC);
+    Registry.register(
+        BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
+        Fletching.identifier("apply_burst_stacking_mob_effect"),
+        ApplyBurstStackingMobEffect.CODEC);
+    Registry.register(
+        BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
+        Fletching.identifier("apply_stacking_mob_effect"),
+        ApplyStackingMobEffect.CODEC);
     Fletching.LOGGER.info("Fletching enchantment keys initialized!");
   }
 }

@@ -69,6 +69,7 @@ public class FletchingDataGenerator implements DataGeneratorEntrypoint {
             new Pair<>("item.fletching.greatbow", "Greatbow"),
             new Pair<>("effect.fletching.frenzy", "Frenzy"),
             new Pair<>("effect.fletching.focus", "Focus"),
+            new Pair<>("effect.fletching.eaglesight", "Eaglesight"),
             new Pair<>("enchantment.fletching.frenzy", "Frenzy"),
             new Pair<>("enchantment.fletching.scattershot", "Scattershot"),
             new Pair<>("enchantment.fletching.focus", "Focus"),

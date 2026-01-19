@@ -114,8 +114,8 @@ public class LongbowItem extends ProjectileWeaponItem {
           }
 
           if (FocusEffect.getFocusedState(playerEntity) == FocusEffect.FocusState.EAGLESIGHT) {
-            // Do extra stuff here TODO
-            playerEntity.removeEffect(FletchingEffects.FOCUS);
+            playerEntity.removeEffect(FletchingEffects.EAGLESIGHT);
+            // Do other stuff here TODO
           }
 
           world.playSound(

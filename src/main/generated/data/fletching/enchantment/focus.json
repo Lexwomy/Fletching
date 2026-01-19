@@ -7,8 +7,11 @@
     "minecraft:hit_block": [
       {
         "effect": {
-          "type": "fletching:remove_mob_effect",
-          "to_remove": "fletching:focus"
+          "type": "fletching:remove_self_mob_effect",
+          "to_remove": [
+            "fletching:focus",
+            "fletching:eaglesight"
+          ]
         }
       }
     ],
@@ -16,12 +19,14 @@
       {
         "affected": "attacker",
         "effect": {
-          "type": "minecraft:apply_mob_effect",
+          "type": "fletching:apply_burst_stacking_mob_effect",
+          "burst_amplifier_trigger": 2.0,
+          "burst_effect": "fletching:eaglesight",
           "max_amplifier": 0.0,
           "max_duration": 30.0,
           "min_amplifier": 0.0,
           "min_duration": 30.0,
-          "to_apply": "fletching:focus"
+          "regular_effect": "fletching:focus"
         },
         "enchanted": "attacker",
         "requirements": {
